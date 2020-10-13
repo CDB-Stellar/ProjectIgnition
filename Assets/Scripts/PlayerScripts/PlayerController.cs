@@ -4,12 +4,20 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    //Private Varibles
+    //public Varibles
+    [Header("Object References")]
     [SerializeField] private Camera cam;
-
-    [SerializeField] private float speed;
     [SerializeField] private Transform flameJet;
+    [SerializeField] private Object fireball;
+    [SerializeField] private Transform fireballSpawn;
+
+    [Header("Player Properties")]
+    [SerializeField] private float speed;
+    [SerializeField] private float maxVelocity;
+
+    //private Varibles
     private Rigidbody2D rbody;
+    private bool hasFireBall;
     // Start is called before the first frame update
     void Start()
     {
@@ -17,26 +25,35 @@ public class PlayerController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        Debug.Log("Mouse 0 value: " + Input.GetAxis("Mouse 0"));
-
-
         if (Input.GetAxis("Mouse 0") > 0.0f)
         {
-            rbody.AddForce(GetJetDirection() * speed);
+            rbody.AddForce(-GetJetDirection() * speed);
         }
         PointJet(GetJetDirection());
+
+        if (Input.GetAxis("Mouse 1") > 0.0f && !hasFireBall)
+        {
+            CreateFireball(GetJetDirection());         
+        }
     }
+    //Returns a direction vector pointed at the mouse normalized
     private Vector2 GetJetDirection()
     {
-        Vector2 jetDir = transform.position - cam.ScreenToWorldPoint(Input.mousePosition);
-        //Debug.DrawRay(transform.position, jetDir.normalized, Color.white);
+        Vector2 jetDir =  cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        //Debug.DrawRay(transform.position, jetDir.normalized);
         return jetDir.normalized;          
     }
-    private void PointJet(Vector2 dir)
+    private void PointJet(Vector3 dir)
     {
-        flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(-dir.y, -dir.x) * Mathf.Rad2Deg);
+        flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+        fireballSpawn.position = transform.position + dir;
+    }  
+    private void CreateFireball(Vector2 dir)
+    {
+        GameObject projectile = (GameObject)Instantiate(fireball, fireballSpawn.transform.position, transform.rotation, fireballSpawn);
+        hasFireBall = true;
     }
    
 }
