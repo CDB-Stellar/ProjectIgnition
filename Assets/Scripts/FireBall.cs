@@ -11,26 +11,39 @@ public class FireBall : MonoBehaviour
 
     private Rigidbody2D rbody;
     private bool hasLaunched;
+    private PlayerController playerController;
+    private float lifeInSeconds = 5f;
     // Start is called before the first frame update
     void Start()
     {
         rbody = GetComponent<Rigidbody2D>();
+        playerController = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<PlayerController>();
+        playerController.OnMouse1Released += LaunchFireBall;
+        Debug.Log(playerController);
+    }
+    private void LaunchFireBall(object Sender, PlayerController.OnMouse1ReleasedArgs e)
+    {       
+        playerController.OnMouse1Released -= LaunchFireBall;
+        transform.parent = null;
+        rbody.simulated = true;
+        hasLaunched = true;
+        rbody.AddForce(e.dir * launchSpeed);        
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (hasLaunched)        
+            lifeInSeconds -= Time.deltaTime;        
+        if (lifeInSeconds < 0.0f)        
+            Destroy(gameObject);
         
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
         if(hasLaunched)
             Destroy(gameObject);
-    }
-    public void Launch(Vector3 dir)
-    {
-        transform.parent = null;
-        rbody.gravityScale = gForce;
-        rbody.AddForce(dir * launchSpeed);
-    }
+        
+    }    
+    
 }
