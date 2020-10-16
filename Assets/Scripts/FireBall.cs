@@ -1,49 +1,92 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class FireBall : MonoBehaviour
-{
-    //public varibles
-    [Header("FireBall Properties")]
-    [SerializeField] private float gForce;
-    [SerializeField] private float launchSpeed;
+{ 
 
     private Rigidbody2D rbody;
-    private bool hasLaunched;
     private PlayerController playerController;
-    private float lifeInSeconds = 5f;
+    private Animator anim;
+
+    private bool hasLaunched;
+    
+    private float lifeTime;
+    private float decayTimer;
+
+    private float decayRate;
+    private float decayAmount;
+    
     // Start is called before the first frame update
     void Start()
     {
-        rbody = GetComponent<Rigidbody2D>();
         playerController = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<PlayerController>();
-        playerController.OnMouse1Released += LaunchFireBall;
-        Debug.Log(playerController);
+        rbody = GetComponent<Rigidbody2D>();     
+        anim = GetComponent<Animator>();
     }
-    private void LaunchFireBall(object Sender, PlayerController.OnMouse1ReleasedArgs e)
-    {       
-        playerController.OnMouse1Released -= LaunchFireBall;
+    void FixedUpdate()
+    {
+        if (lifeTime < 0.0f)
+        {
+            Debug.Log("Being Destroyed");
+            Destroy(gameObject);
+        }
+            
+        if (hasLaunched)
+            Decay();
+    }
+
+    public void LaunchFireBall(Vector3 trajectory, float decayRate, float decayAmount)
+    {    
         transform.parent = null;
         rbody.simulated = true;
         hasLaunched = true;
-        rbody.AddForce(e.dir * launchSpeed);        
-    }
+        rbody.velocity = trajectory;
 
-    // Update is called once per frame
-    void Update()
+        this.decayAmount = decayAmount;
+        this.decayRate = decayRate;
+    }   
+    public void Grow(float growthAmount)
     {
-        if (hasLaunched)        
-            lifeInSeconds -= Time.deltaTime;        
-        if (lifeInSeconds < 0.0f)        
-            Destroy(gameObject);
+        if (anim != null)
+        {
+            float currentSize = anim.GetFloat("fireballSize");
+            anim.SetFloat("fireballSize", currentSize + growthAmount);
+            lifeTime += growthAmount;
+            //Debug.Log(transform.localScale.magnitude);
+        }               
+    }
+    public bool FireBallTooBig()
+    {
+        if (lifeTime >= 100.0f)
+            return true;
         
+        else
+            return false;        
+    }
+    private void Decay()
+    {
+        if (decayTimer < decayRate)
+        {
+            anim.SetFloat("fireballSize", anim.GetFloat("fireballSize") - decayAmount);
+            lifeTime -= decayAmount;
+            decayTimer = 0.0f;
+        }
+        decayTimer += Time.deltaTime;        
+    }   
+    private void explode()
+    {
+        playerController.Launch(transform.position, lifeTime);
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if(hasLaunched)
+        if (hasLaunched)
+        {
+            explode();
             Destroy(gameObject);
-        
+        }
+            
     }    
     
 }

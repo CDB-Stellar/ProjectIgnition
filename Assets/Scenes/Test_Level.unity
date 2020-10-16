@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 154370049}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FireballSpawn
   m_TagString: Untagged
   m_Icon: {fileID: 7174288486110832750, guid: 0000000000000000d000000000000000, type: 0}
@@ -264,7 +264,7 @@ GameObject:
   - component: {fileID: 475029111}
   - component: {fileID: 475029110}
   - component: {fileID: 475029109}
-  m_Layer: 9
+  m_Layer: 10
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -393,7 +393,7 @@ GameObject:
   m_Component:
   - component: {fileID: 985037915}
   - component: {fileID: 985037916}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: FlameJet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -478,7 +478,7 @@ GameObject:
   - component: {fileID: 1856510511}
   - component: {fileID: 1856510510}
   - component: {fileID: 1856510514}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Test_Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -500,7 +500,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.5
+  m_Radius: 0.4
 --- !u!50 &1856510511
 Rigidbody2D:
   serializedVersion: 4
@@ -603,8 +603,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 448677074}
   flameJet: {fileID: 985037915}
-  fireball: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
+  fireballPREFAB: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
   fireballSpawn: {fileID: 154370049}
   speed: 10
   maxVelocity: 0
+  fuel: 1000
+  launchForceFactor: 2
   fireballCoolDown: 1
+  fireballGrowthRate: 15
+  fireballGrowthAmount: 1
+  fireballLaunchSpeed: 10
+  fireballDecayRate: 1
+  fireballDecayAmount: 0.5
+  spawnRadius: 0.4
