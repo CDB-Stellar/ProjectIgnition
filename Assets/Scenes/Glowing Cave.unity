@@ -367,7 +367,7 @@ GameObject:
   - component: {fileID: 1470538204}
   - component: {fileID: 1470538203}
   - component: {fileID: 1470538202}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: LevelTilemap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -9922,5 +9922,13 @@ PrefabInstance:
       propertyPath: cam
       value: 
       objectReference: {fileID: 1196275451}
+    - target: {fileID: 8575558564355332786, guid: 515a153b51566e345bc83d1fa4c91364, type: 3}
+      propertyPath: launchForceFactor
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 8575558564355332786, guid: 515a153b51566e345bc83d1fa4c91364, type: 3}
+      propertyPath: spawnRadius
+      value: 0.2
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 515a153b51566e345bc83d1fa4c91364, type: 3}

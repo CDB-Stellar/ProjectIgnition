@@ -106,7 +106,7 @@ Rigidbody2D:
   m_Material: {fileID: 0}
   m_Interpolate: 0
   m_SleepingMode: 1
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1
   m_Constraints: 4
 --- !u!58 &8575558564355332782
 CircleCollider2D:
@@ -143,12 +143,12 @@ MonoBehaviour:
   speed: 10
   maxVelocity: 0
   fuel: 1000
-  launchForceFactor: 2
+  launchForceFactor: 3
   fireballCoolDown: 1
   fireballGrowthRate: 15
   fireballGrowthAmount: 1
   fireballLaunchSpeed: 10
-  fireballDecayRate: 1
+  fireballDecayRate: 5
   fireballDecayAmount: 0.5
   spawnRadius: 0.4
 --- !u!1 &8575558564933714048

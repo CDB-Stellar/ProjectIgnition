@@ -127,8 +127,8 @@ public class PlayerController : MonoBehaviour
     }
     public void Launch(Vector3 fireballPosition, float fuelTime)
     {
-        Vector3 direction = fireballPosition - transform.position;
-        Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude);    
-        rbody.AddForce(-direction * (fuelTime * launchForceFactor)/ Mathf.Pow(direction.magnitude, 2f) );
+        Vector3 direction = fireballPosition - transform.position;       
+        Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
+        rbody.AddForce(-direction * (fuelTime * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f) );
     }    
 } 
