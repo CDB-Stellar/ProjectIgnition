@@ -14,7 +14,8 @@ public class PlayerController : MonoBehaviour
 
     [Header("Player Properties")]
     [SerializeField] private float speed;
-    [SerializeField] private float maxVelocity;
+    [SerializeField] private float maxVelocityX;
+    [SerializeField] private float maxVelocityY;
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float launchForceFactor;
 
@@ -29,7 +30,6 @@ public class PlayerController : MonoBehaviour
 
     //private Varibles
     private Rigidbody2D rbody;
-    private FireBall dockedFireball;
     private bool hasFireBall = false;
     private bool shootPressed;  
     private bool movePressed;  
@@ -49,6 +49,8 @@ public class PlayerController : MonoBehaviour
         fireRateTimer = fireballCoolDown;
         shootPressed = false;
         movePressed = false;
+
+        GameEvents.current.onFireballExplosion += LaunchPlayer;
     }
     private void Update()
     {
@@ -59,73 +61,74 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (movePressed)        
-            rbody.AddForce(-GetJetDirection() * speed);     
+        if (movePressed)
+        {
+            Vector2 jetDirection = -GetVectorToMousePos() * speed;
+
+            if (Mathf.Abs(rbody.velocity.x) > maxVelocityX)
+                jetDirection.x = 0f;
+
+            if (Mathf.Abs(rbody.velocity.y) > maxVelocityY)
+                jetDirection.y = 0f;
+
+            rbody.AddForce(jetDirection);
+        }
+
+
 
         FireBallManger();       
 
         if (!hasFireBall && fireRateTimer < fireballCoolDown)
             fireRateTimer += Time.deltaTime;
         
-        PointJet(GetJetDirection());        
+        PointJet(GetVectorToMousePos());        
     }
-    
+    private Vector2 GetVectorToMousePos()
+    {
+        Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        return jetDir.normalized;
+    }
+
     //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
     private void FireBallManger()
     {
         if (shootPressed && !hasFireBall)
-            dockedFireball = CreateFireball();
+            CreateFireball();
         else if (!shootPressed && hasFireBall)
             LaunchFireball();
-        else if (hasFireBall && !dockedFireball.FireBallTooBig())
-            GrowFireBall(dockedFireball);
-
-        if (hasFireBall)
-        {
-            Debug.DrawRay(transform.position, transform.position - dockedFireball.transform.position, Color.green);
-        }
+        else if (hasFireBall)
+            GrowFireBall();        
     }
-    private FireBall CreateFireball()
+    private void CreateFireball()
     {       
         hasFireBall = true;
         fireRateTimer = 0.0f;
         fuelUse = 0.0f;
-        return Instantiate(fireballPREFAB, fireballSpawn.transform.position, transform.rotation, fireballSpawn).GetComponent<FireBall>();
+        Instantiate(fireballPREFAB, fireballSpawn.transform.position, transform.rotation, fireballSpawn).GetComponent<FireBall>();
+        GameEvents.current.CreateFireBall(fireballDecayRate, fireballDecayAmount);
     }
-    private void GrowFireBall(FireBall ball)
+    private void GrowFireBall()
     {
         if (sizeChangeTimer <= fireballGrowthRate)
-        {
+        {            
             fuel -= fireballGrowthAmount;
-            dockedFireball.Grow(fireballGrowthAmount);
+            GameEvents.current.GrowFireball(fireballGrowthAmount);
             sizeChangeTimer = 0.0f;
         }       
     }
     private void LaunchFireball()
     {
-        Debug.Log("Shooting fireball");
-        dockedFireball.LaunchFireBall(ShootDirection(), fireballDecayRate, fireballDecayAmount);
+        GameEvents.current.LaunchFireBall(GetVectorToMousePos() * fireballLaunchSpeed + rbody.velocity);
         hasFireBall = false;
-        dockedFireball = null;
     }
-    private Vector3 ShootDirection()
-    {
-        return GetJetDirection() * fireballLaunchSpeed + rbody.velocity;
-    }
-
 
     //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
-    private Vector2 GetJetDirection()
-    {
-        Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        return jetDir.normalized;
-    }
     private void PointJet(Vector3 dir)
     {
         flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
         fireballSpawn.position = transform.position + dir * spawnRadius;
     }
-    public void Launch(Vector3 fireballPosition, float fuelTime)
+    public void LaunchPlayer(Vector3 fireballPosition, float fuelTime)
     {
         Vector3 direction = fireballPosition - transform.position;       
         Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    

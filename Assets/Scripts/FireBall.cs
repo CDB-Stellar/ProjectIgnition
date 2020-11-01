@@ -10,7 +10,7 @@ public class FireBall : MonoBehaviour
     private PlayerController playerController;
     private Animator anim;
 
-    private bool hasLaunched;
+    private bool isLaunched;
     
     private float lifeTime;
     private float decayTimer;
@@ -20,10 +20,14 @@ public class FireBall : MonoBehaviour
     
     // Start is called before the first frame update
     void Start()
-    {
-        playerController = GameObject.FindGameObjectsWithTag("Player")[0].GetComponent<PlayerController>();
+    {        
         rbody = GetComponent<Rigidbody2D>();     
         anim = GetComponent<Animator>();
+
+        // Subsribe Events
+        GameEvents.current.onCreateFireball += InitalizeFireball;
+        GameEvents.current.onGrowFireball += Grow; 
+        GameEvents.current.onFireballLaunch += LaunchFireBall; 
     }
     void FixedUpdate()
     {
@@ -33,35 +37,47 @@ public class FireBall : MonoBehaviour
             Destroy(gameObject);
         }
             
-        if (hasLaunched)
+        if (isLaunched)
             Decay();
     }
 
-    public void LaunchFireBall(Vector3 trajectory, float decayRate, float decayAmount)
-    {    
-        transform.parent = null;
-        rbody.simulated = true;
-        hasLaunched = true;
-        rbody.velocity = trajectory;
-
-        this.decayAmount = decayAmount;
+    public void InitalizeFireball(float decayRate, float decayAmount)
+    {
         this.decayRate = decayRate;
-    }   
-    public void Grow(float growthAmount)
+        this.decayAmount = decayAmount;
+
+        // Unsubscribe from event so the fireball cannot be re-initalized
+        GameEvents.current.onCreateFireball -= InitalizeFireball;
+    }
+
+    private void LaunchFireBall(Vector3 trajectory)
+    {
+        if (!isLaunched)
+        {
+            Debug.Log("Parent object is: " + transform.parent.name);
+            transform.parent = null;
+            rbody.simulated = true;
+            isLaunched = true;
+            rbody.velocity = trajectory;
+        }        
+    }
+    private void Grow(float growthAmount)
     {
         if (anim != null)
         {
-            float currentSize = anim.GetFloat("fireballSize");
-            anim.SetFloat("fireballSize", currentSize + growthAmount);
-            lifeTime += growthAmount;
-            //Debug.Log(transform.localScale.magnitude);
+            if (!isLaunched && !FireBallTooBig())
+            {
+                float currentSize = anim.GetFloat("fireballSize");
+                anim.SetFloat("fireballSize", currentSize + growthAmount);
+                lifeTime += growthAmount;
+                //Debug.Log(transform.localScale.magnitude);
+            }
         }               
     }
-    public bool FireBallTooBig()
+    private bool FireBallTooBig()
     {
         if (lifeTime >= 100.0f)
-            return true;
-        
+            return true;        
         else
             return false;        
     }
@@ -75,15 +91,17 @@ public class FireBall : MonoBehaviour
         }
         decayTimer += Time.deltaTime;        
     }   
-    private void explode()
+    private void Explode()
     {
-        playerController.Launch(transform.position, lifeTime);
+        GameEvents.current.FireballExplosion(transform.position, lifeTime);
+        GameEvents.current.onGrowFireball -= Grow; 
+        GameEvents.current.onFireballLaunch -= LaunchFireBall; 
     }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (hasLaunched)
+        if (isLaunched)
         {
-            explode();
+            Explode();
             Destroy(gameObject);
         }
             
