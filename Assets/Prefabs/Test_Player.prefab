@@ -141,7 +141,8 @@ MonoBehaviour:
   fireballPREFAB: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
   fireballSpawn: {fileID: 8575558564933714049}
   speed: 10
-  maxVelocity: 0
+  maxVelocityX: 8
+  maxVelocityY: 20
   fuel: 1000
   launchForceFactor: 4
   fireballCoolDown: 1
