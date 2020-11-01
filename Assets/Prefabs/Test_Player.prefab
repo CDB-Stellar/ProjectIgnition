@@ -103,7 +103,7 @@ Rigidbody2D:
   m_LinearDrag: 0
   m_AngularDrag: 0.05
   m_GravityScale: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: e00da49239255a14594c8df29c7326c0, type: 2}
   m_Interpolate: 0
   m_SleepingMode: 1
   m_CollisionDetection: 1
@@ -143,14 +143,14 @@ MonoBehaviour:
   speed: 10
   maxVelocity: 0
   fuel: 1000
-  launchForceFactor: 3
+  launchForceFactor: 4
   fireballCoolDown: 1
   fireballGrowthRate: 15
   fireballGrowthAmount: 1
   fireballLaunchSpeed: 10
   fireballDecayRate: 5
   fireballDecayAmount: 0.5
-  spawnRadius: 0.4
+  spawnRadius: 0.2
 --- !u!1 &8575558564933714048
 GameObject:
   m_ObjectHideFlags: 0
