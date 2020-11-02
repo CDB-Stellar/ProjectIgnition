@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
     private void PointJet(Vector3 dir)
     {
-        flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg);
+        flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
         fireballSpawn.position = transform.position + dir * spawnRadius;
     }
     public void LaunchPlayer(Vector3 fireballPosition, float fuelTime)
