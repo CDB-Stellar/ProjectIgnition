@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxVelocityY;
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float launchForceFactor;
+    [SerializeField] private float jetRotationSpeed = 5f;
 
     [Header("Fireball Properties")]
     [SerializeField] private float fireballCoolDown;
@@ -80,8 +81,11 @@ public class PlayerController : MonoBehaviour
 
         if (!hasFireBall && fireRateTimer < fireballCoolDown)
             fireRateTimer += Time.deltaTime;
-        
-        PointJet(GetVectorToMousePos());        
+
+        //if (movePressed)
+            PointJet(GetVectorToMousePos());
+       //else
+            //PointJet(new Vector3(0f, 1f));
     }
     private Vector2 GetVectorToMousePos()
     {
@@ -125,7 +129,12 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
     private void PointJet(Vector3 dir)
     {
-        flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
+        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
+        flameJet.transform.rotation = rotation;
+
+
+        //flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
         fireballSpawn.position = transform.position + dir * spawnRadius;
     }
     public void LaunchPlayer(Vector3 fireballPosition, float fuelTime)

@@ -455,6 +455,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 6693912805747462357, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
+      propertyPath: InitialModule.startLifetime.minScalar
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 6693912805747462357, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
+      propertyPath: InitialModule.startLifetime.scalar
+      value: 0.25
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
 --- !u!4 &5125308910316924723 stripped
