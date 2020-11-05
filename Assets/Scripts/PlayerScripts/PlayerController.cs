@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement; //to get current scene, for saving
+using System.IO; //to work with files, for saving
 
 public class PlayerController : MonoBehaviour
 {
@@ -28,20 +30,24 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float fireballDecayAmount; //range
     [SerializeField] private float spawnRadius; //range
 
+    public int currentLevel = 1; //for saving, 1 by default
+    public string currentCheckpoint; //for saving
+
     //private Varibles
     private Rigidbody2D rbody;
     private bool hasFireBall = false;
     private bool shootPressed;  
     private bool movePressed;  
     private float fuelUse;
+    private int unlockedLevel = 1; //for saving, level 1 unlocked by default
 
     //tick timers
     private float fireRateTimer;
     private float sizeChangeTimer;
 
-    
-    
-    //---------------------------------------------------------UNITY RUNTIME-----------------------------------------------------------------------------
+
+
+    //--------------------------------------------------------- UNITY RUNTIME -------------------------------------------------
     // Start is called before the first frame update
     void Start()
     {
@@ -51,6 +57,22 @@ public class PlayerController : MonoBehaviour
         movePressed = false;
 
         GameEvents.current.onFireballExplosion += LaunchPlayer;
+
+        /* Saving stuff > */
+        // Get unlocked levels from save data
+        string path = Application.persistentDataPath + "/player.savefile"; //where the save file is
+        if (File.Exists(path))
+        {
+            PlayerData data = SaveSystem.LoadPlayer();
+            unlockedLevel = data.level;
+            Debug.Log("file exists, unlocked level: " + unlockedLevel);
+        }
+        if (currentLevel > unlockedLevel)
+        {
+            currentLevel = SceneManager.GetActiveScene().buildIndex;
+            SavePlayer(); //save every time the player gets to higher level
+        }
+        /* < Done Saving stuff */
     }
     private void Update()
     {
@@ -81,7 +103,7 @@ public class PlayerController : MonoBehaviour
         if (!hasFireBall && fireRateTimer < fireballCoolDown)
             fireRateTimer += Time.deltaTime;
         
-        PointJet(GetVectorToMousePos());        
+        PointJet(GetVectorToMousePos());
     }
     private Vector2 GetVectorToMousePos()
     {
@@ -89,7 +111,7 @@ public class PlayerController : MonoBehaviour
         return jetDir.normalized;
     }
 
-    //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
+    //--------------------------------------------------------- Fireball Code -------------------------------------------------
     private void FireBallManger()
     {
         if (shootPressed && !hasFireBall)
@@ -122,7 +144,7 @@ public class PlayerController : MonoBehaviour
         hasFireBall = false;
     }
 
-    //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
+    //--------------------------------------------------------- MOVEMENT CODE -------------------------------------------------
     private void PointJet(Vector3 dir)
     {
         flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
@@ -133,5 +155,27 @@ public class PlayerController : MonoBehaviour
         Vector3 direction = fireballPosition - transform.position;       
         Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
         rbody.AddForce(-direction * (fuelTime * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f) );
-    }    
+    }
+
+    //--------------------------------------------------------- SAVING/LOADING -------------------------------------------------
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Checkpoint")) //if player enters the checkpoint bounding box
+        { 
+            currentCheckpoint = other.name; //the checkpoint object
+            SavePlayer(); //save every time the player hits a new checkpoint
+        } 
+    }
+    public void SavePlayer()
+    {
+        SaveSystem.SavePlayer(this);
+        Debug.Log("player data has been saved");
+    }
+    public void LoadSpawn()
+    {
+        PlayerData data = SaveSystem.LoadPlayer();
+        string checkpointName = data.checkpoint;
+        Transform bonfire = GameObject.Find(checkpointName).transform;
+        Transform spawn = bonfire.Find("PlayerSpawn");
+    }
 } 
