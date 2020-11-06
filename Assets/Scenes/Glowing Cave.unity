@@ -93596,7 +93596,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483943810896822254, guid: 48f0a06e42fbb964fb4167fdd7dddce0, type: 3}
       propertyPath: m_Name
-      value: 2_BonfireCheckpoint
+      value: BonfireCheckpoint (1)
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 48f0a06e42fbb964fb4167fdd7dddce0, type: 3}
@@ -93653,7 +93653,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2483943810896822254, guid: 48f0a06e42fbb964fb4167fdd7dddce0, type: 3}
       propertyPath: m_Name
-      value: 1_BonfireCheckpoint
+      value: BonfireCheckpoint
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 48f0a06e42fbb964fb4167fdd7dddce0, type: 3}
