@@ -15,8 +15,8 @@ public class FireBall : MonoBehaviour
     private float lifeTime;
     private float decayTimer;
 
-    private float decayRate;
-    private float decayAmount;
+    [SerializeField] private float decayRate;
+    [SerializeField] private float decayAmount;
     
     // Start is called before the first frame update
     void Start()
@@ -25,7 +25,8 @@ public class FireBall : MonoBehaviour
         anim = GetComponent<Animator>();
 
         // Subsribe Events
-        GameEvents.current.onCreateFireball += InitalizeFireball;
+        // FIX YOUR SHITTY SYSTEM LIAM
+        GameEvents.current.onCreateFireball += InitalizeFireball; //TODO FIND ANOTHER WAY TO PASS DECAY INFO FROM PLAYER, IS NO ACTIVATING UNTIL A FOLLOW UP FIREBALL IS LAUNCHED
         GameEvents.current.onGrowFireball += Grow; 
         GameEvents.current.onFireballLaunch += LaunchFireBall; 
     }

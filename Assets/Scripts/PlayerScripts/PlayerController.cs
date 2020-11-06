@@ -68,26 +68,22 @@ public class PlayerController : MonoBehaviour
 
             if (Mathf.Abs(rbody.velocity.x) > maxVelocityX)
                 jetDirection.x = 0f;
-
             if (Mathf.Abs(rbody.velocity.y) > maxVelocityY)
                 jetDirection.y = 0f;
 
             rbody.AddForce(jetDirection);
         }
 
-
-
         FireBallManger();       
 
         if (!hasFireBall && fireRateTimer < fireballCoolDown)
             fireRateTimer += Time.deltaTime;
-<<<<<<< HEAD
 
         //if (movePressed)
             PointJet(GetVectorToMousePos());
        //else
             //PointJet(new Vector3(0f, 1f));
-=======
+
         
         PointJet(GetVectorToMousePos());
     }
