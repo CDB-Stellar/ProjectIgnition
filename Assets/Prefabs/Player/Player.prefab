@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 6155896712697979622}
   - component: {fileID: 6155896712697979618}
   - component: {fileID: 6155896712697979623}
+  - component: {fileID: 2649297731559391684}
   m_Layer: 8
   m_Name: Player
   m_TagString: Player
@@ -176,6 +177,7 @@ MonoBehaviour:
   maxVelocityY: 20
   fuel: 1000
   launchForceFactor: 4
+  jetRotationSpeed: 5
   fireballCoolDown: 1
   fireballGrowthRate: 15
   fireballGrowthAmount: 1
@@ -183,6 +185,8 @@ MonoBehaviour:
   fireballDecayRate: 5
   fireballDecayAmount: 0.5
   spawnRadius: 0.2
+  currentLevel: 1
+  currentCheckpoint: 
 --- !u!198 &6155896712697979618
 ParticleSystem:
   m_ObjectHideFlags: 0
@@ -4963,6 +4967,18 @@ ParticleSystemRenderer:
   m_Mesh2: {fileID: 0}
   m_Mesh3: {fileID: 0}
   m_MaskInteraction: 0
+--- !u!114 &2649297731559391684
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6155896712697979641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ef1d4dadd4bae3e41a6a6ee24048b6a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6693912805747462359
 GameObject:
   m_ObjectHideFlags: 0
