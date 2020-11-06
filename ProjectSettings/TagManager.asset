@@ -5,9 +5,6 @@ TagManager:
   serializedVersion: 2
   tags:
   - Checkpoint
-  - Spawn
-  - Traps
-  - Enemy
   layers:
   - Default
   - TransparentFX
