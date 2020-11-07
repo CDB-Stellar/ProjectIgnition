@@ -147,17 +147,17 @@ public class PlayerController : MonoBehaviour
         rbody.AddForce(-direction * (fuelTime * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f) );
     }
 
-    //----------------------------------------------------------------------- DEATH CODE ------------------------------------------------------------------------
-    private void OnTriggerEnter2D(Collider2D other)
-    {
-        if (other.CompareTag("Traps"))
-        {
-             Destroy(this.gameObject);
-        }
+    ////----------------------------------------------------------------------- DEATH CODE ------------------------------------------------------------------------
+    //private void OnTriggerEnter2D(Collider2D other)
+    //{
+    //    if (other.CompareTag("Traps"))
+    //    {
+    //         Destroy(this.gameObject);
+    //    }
 
-        if (other.CompareTag("Enemy"))
-        {
-            Destroy(this.gameObject);
-        }
-    }
+    //    if (other.CompareTag("Enemy"))
+    //    {
+    //        Destroy(this.gameObject);
+    //    }
+    //}
 }
