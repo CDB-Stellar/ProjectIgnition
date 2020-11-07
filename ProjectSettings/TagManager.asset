@@ -8,6 +8,8 @@ TagManager:
   - Enemy
   - Spawn
   - Traps
+  - turn
+  - END_LEVEL
   layers:
   - Default
   - TransparentFX

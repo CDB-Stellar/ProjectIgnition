@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 8598024092566980425}
   - component: {fileID: 8598024092566980424}
   - component: {fileID: 6856986112722528805}
+  - component: {fileID: 6921326403463181003}
   m_Layer: 0
   m_Name: WaterEnemy
   m_TagString: Enemy
@@ -113,9 +114,23 @@ CapsuleCollider2D:
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_UsedByComposite: 0
   m_Offset: {x: -0.010547161, y: 0.0052736998}
   m_Size: {x: 1.1410942, y: 1.2954714}
   m_Direction: 0
+--- !u!114 &6921326403463181003
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8598024092566980427}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9899f8aaa6655d64aa5e46d1390494b1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  speed: 1
+  MoveRight: 0
