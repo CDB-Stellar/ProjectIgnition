@@ -108,8 +108,11 @@ public class PlayerController : MonoBehaviour
         hasFireBall = true;
         fireRateTimer = 0.0f;
         fuelUse = 0.0f;
-        Instantiate(fireballPREFAB, fireballSpawn.transform.position, transform.rotation, fireballSpawn).GetComponent<FireBall>();
-        GameEvents.current.CreateFireBall(fireballDecayRate, fireballDecayAmount);
+        Instantiate(
+            fireballPREFAB,
+            fireballSpawn.transform.position,
+            transform.rotation, fireballSpawn
+        ).GetComponent<FireBall>().InitalizeFireball(fireballDecayRate, fireballDecayAmount);
     }
     private void GrowFireBall()
     {

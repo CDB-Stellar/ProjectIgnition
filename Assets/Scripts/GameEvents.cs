@@ -14,15 +14,10 @@ public class GameEvents : MonoBehaviour
     }
 
     // Events
-    public Action<float, float> onCreateFireball;
     public Action<float> onGrowFireball;
     public Action<Vector3> onFireballLaunch;
     public Action<Vector3, float> onFireballExplosion;
-
-    public void CreateFireBall(float decayRate, float decayAmount)
-    {
-        onCreateFireball?.Invoke(decayRate, decayAmount);
-    }
+    
     public void GrowFireball(float growthAmount)
     {
         onGrowFireball?.Invoke(growthAmount);

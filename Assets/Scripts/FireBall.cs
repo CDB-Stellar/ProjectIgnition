@@ -15,8 +15,8 @@ public class FireBall : MonoBehaviour
     private float lifeTime;
     private float decayTimer;
 
-    [SerializeField] private float decayRate;
-    [SerializeField] private float decayAmount;
+    private float decayRate;
+    private float decayAmount;
     
     // Start is called before the first frame update
     void Start()
@@ -24,9 +24,7 @@ public class FireBall : MonoBehaviour
         rbody = GetComponent<Rigidbody2D>();     
         anim = GetComponent<Animator>();
 
-        // Subsribe Events
-        // FIX YOUR SHITTY SYSTEM LIAM
-        GameEvents.current.onCreateFireball += InitalizeFireball; //TODO FIND ANOTHER WAY TO PASS DECAY INFO FROM PLAYER, IS NO ACTIVATING UNTIL A FOLLOW UP FIREBALL IS LAUNCHED
+        // Subsribe Events       
         GameEvents.current.onGrowFireball += Grow; 
         GameEvents.current.onFireballLaunch += LaunchFireBall; 
     }
@@ -46,9 +44,7 @@ public class FireBall : MonoBehaviour
     {
         this.decayRate = decayRate;
         this.decayAmount = decayAmount;
-
-        // Unsubscribe from event so the fireball cannot be re-initalized
-        GameEvents.current.onCreateFireball -= InitalizeFireball;
+        Debug.Log("Fireball DecayRate: " + this.decayRate + ", DecayAmount(fuel): " + this.decayAmount);
     }
 
     private void LaunchFireBall(Vector3 trajectory)
@@ -58,6 +54,7 @@ public class FireBall : MonoBehaviour
             Debug.Log("Parent object is: " + transform.parent.name);
             transform.parent = null;
             rbody.simulated = true;
+            rbody.gravityScale = 0.3f;
             isLaunched = true;
             rbody.velocity = trajectory;
         }        
@@ -70,8 +67,7 @@ public class FireBall : MonoBehaviour
             {
                 float currentSize = anim.GetFloat("fireballSize");
                 anim.SetFloat("fireballSize", currentSize + growthAmount);
-                lifeTime += growthAmount;
-                //Debug.Log(transform.localScale.magnitude);
+                lifeTime += growthAmount;                  
             }
         }               
     }
@@ -84,11 +80,13 @@ public class FireBall : MonoBehaviour
     }
     private void Decay()
     {
-        if (decayTimer < decayRate)
-        {
+        //Debug.Log("Decay Timer: " + decayTimer + ", Decay Rate:" + decayRate);
+        if (decayTimer > decayRate)
+        {            
             anim.SetFloat("fireballSize", anim.GetFloat("fireballSize") - decayAmount);
             lifeTime -= decayAmount;
             decayTimer = 0.0f;
+            Debug.Log("Decaying, LifeTime: " + lifeTime + ", FireBallSize(from animator): " + anim.GetFloat("fireballSize"));
         }
         decayTimer += Time.deltaTime;        
     }   
