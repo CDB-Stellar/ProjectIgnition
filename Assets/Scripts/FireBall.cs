@@ -54,7 +54,6 @@ public class FireBall : MonoBehaviour
             Debug.Log("Parent object is: " + transform.parent.name);
             transform.parent = null;
             rbody.simulated = true;
-            rbody.gravityScale = 0.3f;
             isLaunched = true;
             rbody.velocity = trajectory;
         }        
