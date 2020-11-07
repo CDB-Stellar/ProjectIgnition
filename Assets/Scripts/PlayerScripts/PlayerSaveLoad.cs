@@ -45,6 +45,17 @@ public class PlayerSaveLoad : MonoBehaviour
             currentCheckpoint = other.name; //the checkpoint object
             SavePlayer(); //save every time the player hits a new checkpoint
         }
+
+        // Death stuff
+        if (other.CompareTag("Traps"))
+        {
+            SceneManager.LoadScene("GameOver");
+        }
+
+        if (other.CompareTag("Enemy"))
+        {
+            SceneManager.LoadScene("GameOver");
+        }
     }
     public void SavePlayer()
     {
