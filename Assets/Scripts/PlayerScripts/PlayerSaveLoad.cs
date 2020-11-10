@@ -28,13 +28,13 @@ public class PlayerSaveLoad : MonoBehaviour
             currentLevel = SceneManager.GetActiveScene().buildIndex;
             SavePlayer(); //save every time the player gets to higher level
         }
-        /* < Done Saving stuff */
+        /* < Done Saving stuff */      
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+
     }
 
     //--------------------------------------------------------- SAVING/LOADING -------------------------------------------------
@@ -45,18 +45,13 @@ public class PlayerSaveLoad : MonoBehaviour
             currentCheckpoint = other.name; //the checkpoint object
             SavePlayer(); //save every time the player hits a new checkpoint
         }
-
-        // Death stuff
-        if (other.CompareTag("Traps"))
+        // COMPRESSED YOUR IF STATEMENT
+        // I undid everything else I did until we can figure out the functionality later
+        if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
         {
             SceneManager.LoadScene("GameOver");
         }
-
-        if (other.CompareTag("Enemy"))
-        {
-            SceneManager.LoadScene("GameOver");
-        }
-    }
+    }    
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
