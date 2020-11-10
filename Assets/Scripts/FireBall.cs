@@ -73,7 +73,11 @@ public class FireBall : MonoBehaviour
     private bool FireBallTooBig()
     {
         if (lifeTime >= 100.0f)
-            return true;        
+        {
+
+            GameEvents.current.FireBallCompleteGrowth();
+            return true;
+        }
         else
             return false;        
     }

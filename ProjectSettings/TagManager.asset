@@ -10,6 +10,7 @@ TagManager:
   - Traps
   - turn
   - END_LEVEL
+  - PlayerProjectile
   layers:
   - Default
   - TransparentFX
@@ -22,7 +23,7 @@ TagManager:
   - Player
   - PlayerProjectile
   - Ground
-  - 
+  - Hazard
   - 
   - 
   - 
@@ -44,6 +45,21 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: BackGround
+    uniqueID: 458313293
+    locked: 0
+  - name: BehindPlayer
+    uniqueID: 540957399
+    locked: 0
+  - name: Player
+    uniqueID: 983959397
+    locked: 0
+  - name: InfrontPlayer
+    uniqueID: 3242636469
+    locked: 0
+  - name: ForeGround
+    uniqueID: 3342422135
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0

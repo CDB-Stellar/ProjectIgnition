@@ -16,6 +16,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed;
     [SerializeField] private float maxVelocityX;
     [SerializeField] private float maxVelocityY;
+    [SerializeField] private float maxFuel;
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float launchForceFactor;
     [SerializeField] private float jetRotationSpeed = 5f;
@@ -23,7 +24,7 @@ public class PlayerController : MonoBehaviour
     [Header("Fireball Properties")]
     [SerializeField] private float fireballCoolDown;
     [SerializeField] private float fireballGrowthRate;  //the amount of time in seconds that a growth tick fires
-    [SerializeField] private float fireballGrowthAmount; 
+    [SerializeField] private float fireballGrowthAmount;
     [SerializeField] private float fireballLaunchSpeed;
     [SerializeField] private float fireballDecayRate; // length og time in seconds between each decay tick
     [SerializeField] private float fireballDecayAmount; //range
@@ -32,16 +33,16 @@ public class PlayerController : MonoBehaviour
     //private Varibles
     private Rigidbody2D rbody;
     private bool hasFireBall = false;
-    private bool shootPressed;  
-    private bool movePressed;  
-    private float fuelUse;
+    private bool shootPressed;
+    private bool movePressed;
+    private bool isFireballMaxSize;
 
     //tick timers
     private float fireRateTimer;
     private float sizeChangeTimer;
 
-    
-    
+
+
     //---------------------------------------------------------UNITY RUNTIME-----------------------------------------------------------------------------
     // Start is called before the first frame update
     void Start()
@@ -51,12 +52,13 @@ public class PlayerController : MonoBehaviour
         shootPressed = false;
         movePressed = false;
 
+        GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
         GameEvents.current.onFireballExplosion += LaunchPlayer;
     }
     private void Update()
     {
-        shootPressed = Input.GetMouseButton(1);      
-        movePressed = Input.GetMouseButton(0);      
+        shootPressed = Input.GetMouseButton(1);
+        movePressed = Input.GetMouseButton(0);
     }
 
     // Update is called once per frame
@@ -74,17 +76,16 @@ public class PlayerController : MonoBehaviour
             rbody.AddForce(jetDirection);
         }
 
-        FireBallManger();       
+        FireBallManger();
 
         if (!hasFireBall && fireRateTimer < fireballCoolDown)
             fireRateTimer += Time.deltaTime;
 
-        //if (movePressed)
-            PointJet(GetVectorToMousePos());
-       //else
-            //PointJet(new Vector3(0f, 1f));
+        PointJet(GetVectorToMousePos());
+        ScaleJet();
+       
 
-        
+
         PointJet(GetVectorToMousePos());
     }
     private Vector2 GetVectorToMousePos()
@@ -100,14 +101,13 @@ public class PlayerController : MonoBehaviour
             CreateFireball();
         else if (!shootPressed && hasFireBall)
             LaunchFireball();
-        else if (hasFireBall)
-            GrowFireBall();        
+        else if (hasFireBall && !isFireballMaxSize)
+            GrowFireBall();
     }
     private void CreateFireball()
-    {       
+    {
         hasFireBall = true;
         fireRateTimer = 0.0f;
-        fuelUse = 0.0f;
         Instantiate(
             fireballPREFAB,
             fireballSpawn.transform.position,
@@ -117,16 +117,22 @@ public class PlayerController : MonoBehaviour
     private void GrowFireBall()
     {
         if (sizeChangeTimer <= fireballGrowthRate)
-        {            
+        {
             fuel -= fireballGrowthAmount;
             GameEvents.current.GrowFireball(fireballGrowthAmount);
             sizeChangeTimer = 0.0f;
-        }       
+        }
+    }
+    private void FireBallMaxSize()
+    {
+        isFireballMaxSize = true;
+        fuel += fireballGrowthAmount;
     }
     private void LaunchFireball()
     {
         GameEvents.current.LaunchFireBall(GetVectorToMousePos() * fireballLaunchSpeed + rbody.velocity);
         hasFireBall = false;
+        isFireballMaxSize = false;
     }
 
     //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
@@ -140,24 +146,15 @@ public class PlayerController : MonoBehaviour
         //flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
         fireballSpawn.position = transform.position + dir * spawnRadius;
     }
+    private void ScaleJet()
+    {
+        float jetSize = fuel / maxFuel;
+        flameJet.localScale = new Vector3(jetSize, jetSize, 1f);
+    }
     public void LaunchPlayer(Vector3 fireballPosition, float fuelTime)
     {
         Vector3 direction = fireballPosition - transform.position;       
         Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
         rbody.AddForce(-direction * (fuelTime * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f) );
     }
-
-    ////----------------------------------------------------------------------- DEATH CODE ------------------------------------------------------------------------
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    if (other.CompareTag("Traps"))
-    //    {
-    //         Destroy(this.gameObject);
-    //    }
-
-    //    if (other.CompareTag("Enemy"))
-    //    {
-    //        Destroy(this.gameObject);
-    //    }
-    //}
 }

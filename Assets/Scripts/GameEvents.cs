@@ -16,6 +16,7 @@ public class GameEvents : MonoBehaviour
     // Events
     public Action<float> onGrowFireball;
     public Action<Vector3> onFireballLaunch;
+    public Action onFireBallCompleteGrowth;
     public Action<Vector3, float> onFireballExplosion;
     
     public void GrowFireball(float growthAmount)
@@ -28,10 +29,16 @@ public class GameEvents : MonoBehaviour
         onFireballLaunch?.Invoke(dir); // Same as a if(onFireball != null) { onFireballLaunch(); }        
     }
 
+    public void FireBallCompleteGrowth()
+    {
+        onFireBallCompleteGrowth?.Invoke();
+    }
+
     public void FireballExplosion(Vector3 fireBallPos, float lifeTime)
     {
         onFireballExplosion?.Invoke(fireBallPos, lifeTime);
     }
+
      
 
 
