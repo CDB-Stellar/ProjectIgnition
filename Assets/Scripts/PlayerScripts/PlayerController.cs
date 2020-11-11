@@ -19,7 +19,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float maxFuel;
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float launchForceFactor;
+
+    [Header("Jet Properties")]   
     [SerializeField] private float jetRotationSpeed = 5f;
+    [SerializeField] private Vector3 jetRestPosition; 
 
     [Header("Fireball Properties")]
     [SerializeField] private float fireballCoolDown;
@@ -28,7 +31,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float fireballLaunchSpeed;
     [SerializeField] private float fireballDecayRate; // length og time in seconds between each decay tick
     [SerializeField] private float fireballDecayAmount; //range
-    [SerializeField] private float spawnRadius; //range
 
     //private Varibles
     private Rigidbody2D rbody;
@@ -138,13 +140,22 @@ public class PlayerController : MonoBehaviour
     //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
     private void PointJet(Vector3 dir)
     {
-        float angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        float angle;
+        
+        if (movePressed) // if the mouse is pressed, set the angle to rotate to the mouse position
+            angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
+        else // otherwise set the angle to the rest position
+            angle = Mathf.Atan2(jetRestPosition.y, jetRestPosition.x) * Mathf.Rad2Deg - 90f;
+
+        // Carry out the rotation
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        flameJet.transform.rotation = rotation;
+        flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
+      
+        
+        //Always move the fireballSpawnPosition
+        fireballSpawn.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
 
 
-        //flameJet.eulerAngles = Vector3.forward * (Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f);
-        fireballSpawn.position = transform.position + dir * spawnRadius;
     }
     private void ScaleJet()
     {
@@ -154,7 +165,7 @@ public class PlayerController : MonoBehaviour
     public void LaunchPlayer(Vector3 fireballPosition, float fuelTime)
     {
         Vector3 direction = fireballPosition - transform.position;       
-        Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
+        //Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
         rbody.AddForce(-direction * (fuelTime * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f) );
     }
 }

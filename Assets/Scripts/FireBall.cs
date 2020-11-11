@@ -30,12 +30,8 @@ public class FireBall : MonoBehaviour
     }
     void FixedUpdate()
     {
-        if (lifeTime < 0.0f)
-        {
-            Debug.Log("Being Destroyed");
-            Destroy(gameObject);
-        }
-            
+        if (lifeTime < 0.0f)        
+            Destroy(gameObject);           
         if (isLaunched)
             Decay();
     }
@@ -44,14 +40,12 @@ public class FireBall : MonoBehaviour
     {
         this.decayRate = decayRate;
         this.decayAmount = decayAmount;
-        Debug.Log("Fireball DecayRate: " + this.decayRate + ", DecayAmount(fuel): " + this.decayAmount);
     }
 
     private void LaunchFireBall(Vector3 trajectory)
     {
         if (!isLaunched)
         {
-            Debug.Log("Parent object is: " + transform.parent.name);
             transform.parent = null;
             rbody.simulated = true;
             isLaunched = true;
@@ -89,7 +83,7 @@ public class FireBall : MonoBehaviour
             anim.SetFloat("fireballSize", anim.GetFloat("fireballSize") - decayAmount);
             lifeTime -= decayAmount;
             decayTimer = 0.0f;
-            Debug.Log("Decaying, LifeTime: " + lifeTime + ", FireBallSize(from animator): " + anim.GetFloat("fireballSize"));
+            //Debug.Log("Decaying, LifeTime: " + lifeTime + ", FireBallSize(from animator): " + anim.GetFloat("fireballSize"));
         }
         decayTimer += Time.deltaTime;        
     }   
