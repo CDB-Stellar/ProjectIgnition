@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 4406744221317890389}
   - component: {fileID: 3340828715503482475}
   - component: {fileID: 2995929769616486414}
+  - component: {fileID: 1990234823}
   m_Layer: 0
   m_Name: WindEnemy
   m_TagString: Untagged
@@ -119,3 +120,20 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &1990234823
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6309446435606576449}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 52af31cd93e55c140961aa7d22f9d46c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerDetectionRadius: 6
+  suctionMultiplier: 30
+  playerLayer:
+    serializedVersion: 2
+    m_Bits: 256

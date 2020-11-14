@@ -10,15 +10,15 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Camera cam;
     [SerializeField] private Transform flameJet;
     [SerializeField] private GameObject fireballPREFAB;
-    [SerializeField] private Transform fireballSpawn;
 
     [Header("Player Properties")]
     [SerializeField] private float speed;
-    [SerializeField] private float maxVelocityX;
-    [SerializeField] private float maxVelocityY;
+    [SerializeField] private float maxGroundSpeed;
     [SerializeField] private float maxFuel;
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float launchForceFactor;
+    [SerializeField] private float layerDetectionRadius;
+    [SerializeField] private LayerMask ground;
 
     [Header("Jet Properties")]   
     [SerializeField] private float jetRotationSpeed = 5f;
@@ -38,6 +38,7 @@ public class PlayerController : MonoBehaviour
     private bool shootPressed;
     private bool movePressed;
     private bool isFireballMaxSize;
+    private bool isOnGround;
 
     //tick timers
     private float fireRateTimer;
@@ -55,7 +56,7 @@ public class PlayerController : MonoBehaviour
         movePressed = false;
 
         GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
-        GameEvents.current.onFireballExplosion += LaunchPlayer;
+        GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
     }
     private void Update()
     {
@@ -66,16 +67,17 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
+        isOnGround = IsTouchingLayer(ground);
+        Debug.Log("Is touching the ground?: " + isOnGround);
+
         if (movePressed)
         {
             Vector2 jetDirection = -GetVectorToMousePos() * speed;
 
-            if (Mathf.Abs(rbody.velocity.x) > maxVelocityX)
+            if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)
                 jetDirection.x = 0f;
-            if (Mathf.Abs(rbody.velocity.y) > maxVelocityY)
-                jetDirection.y = 0f;
 
-            rbody.AddForce(jetDirection);
+                rbody.AddForce(jetDirection);
         }
 
         FireBallManger();
@@ -95,6 +97,10 @@ public class PlayerController : MonoBehaviour
         Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         return jetDir.normalized;
     }
+    private bool IsTouchingLayer(LayerMask layerMask)
+    {
+        return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
+    }
 
     //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
     private void FireBallManger()
@@ -112,8 +118,8 @@ public class PlayerController : MonoBehaviour
         fireRateTimer = 0.0f;
         Instantiate(
             fireballPREFAB,
-            fireballSpawn.transform.position,
-            transform.rotation, fireballSpawn
+            transform.position,
+            transform.rotation, transform
         ).GetComponent<FireBall>().InitalizeFireball(fireballDecayRate, fireballDecayAmount);
     }
     private void GrowFireBall()
@@ -149,23 +155,18 @@ public class PlayerController : MonoBehaviour
 
         // Carry out the rotation
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
-      
-        
-        //Always move the fireballSpawnPosition
-        fireballSpawn.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
-
-
+        flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);      
     }
     private void ScaleJet()
     {
         float jetSize = fuel / maxFuel;
         flameJet.localScale = new Vector3(jetSize, jetSize, 1f);
     }
-    public void LaunchPlayer(Vector3 fireballPosition, float fuelTime)
+    public void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
     {
-        Vector3 direction = fireballPosition - transform.position;       
+        Vector3 direction = entityPosition - transform.position;       
         //Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
-        rbody.AddForce(-direction * (fuelTime * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f) );
+        rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f) );
     }
+   
 }

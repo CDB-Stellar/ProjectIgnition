@@ -15,9 +15,9 @@ public class GameEvents : MonoBehaviour
 
     // FireBall Events
     public Action<float> onGrowFireball;
-    public Action<Vector3> onFireballLaunch;
+    public Action<Vector3> onLaunchFireBall;
     public Action onFireBallCompleteGrowth;
-    public Action<Vector3, float> onFireballExplosion;
+    public Action<Vector3, float> onApplyForceToPlayer;
 
     //Player Events
     public Action onPlayerDeath;
@@ -29,16 +29,16 @@ public class GameEvents : MonoBehaviour
         onGrowFireball?.Invoke(growthAmount);
     }
     public void LaunchFireBall(Vector3 dir)
-    {     
-        onFireballLaunch?.Invoke(dir); // Same as a if(onFireball != null) { onFireballLaunch(); }        
+    {
+        onLaunchFireBall?.Invoke(dir); // Same as a if(onFireball != null) { onApplyForceOnPlayer(); }        
     }
     public void FireBallCompleteGrowth()
     {
         onFireBallCompleteGrowth?.Invoke();
     }
-    public void FireballExplosion(Vector3 fireBallPos, float lifeTime)
+    public void ApplyForceToPlayer(Vector3 fireBallPos, float lifeTime)
     {
-        onFireballExplosion?.Invoke(fireBallPos, lifeTime);
+        onApplyForceToPlayer?.Invoke(fireBallPos, lifeTime);
     }
     
     //PlayerEvents
