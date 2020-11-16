@@ -8,7 +8,7 @@ public class PlayerSaveLoad : MonoBehaviour
 {
     // Public Variables
     public int currentLevel = 1; //level 1 by default
-    public GameObject respawnUI = GameObject.Find("RespawnCanvas");
+    public GameObject respawnUI;
 
     // Private Variables
     private int unlockedLevel = 1; //level 1 unlocked by default
