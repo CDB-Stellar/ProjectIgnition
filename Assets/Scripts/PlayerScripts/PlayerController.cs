@@ -20,9 +20,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float layerDetectionRadius;
     [SerializeField] private LayerMask ground;
 
-    [Header("Jet Properties")]   
+    [Header("Jet Properties")]
     [SerializeField] private float jetRotationSpeed = 5f;
-    [SerializeField] private Vector3 jetRestPosition; 
+    [SerializeField] private Vector3 jetRestPosition;
 
     [Header("Fireball Properties")]
     [SerializeField] private float fireballCoolDown;
@@ -77,7 +77,7 @@ public class PlayerController : MonoBehaviour
             if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)
                 jetDirection.x = 0f;
 
-                rbody.AddForce(jetDirection);
+            rbody.AddForce(jetDirection);
         }
 
         FireBallManger();
@@ -87,7 +87,7 @@ public class PlayerController : MonoBehaviour
 
         PointJet(GetVectorToMousePos());
         ScaleJet();
-       
+
 
 
         PointJet(GetVectorToMousePos());
@@ -100,6 +100,10 @@ public class PlayerController : MonoBehaviour
     private bool IsTouchingLayer(LayerMask layerMask)
     {
         return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
+    }
+    private void Refuel(float amount, float maximum)
+    {
+        fuel = Mathf.Min(fuel + amount, Mathf.Round(maxFuel * maximum));
     }
 
     //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
@@ -147,7 +151,7 @@ public class PlayerController : MonoBehaviour
     private void PointJet(Vector3 dir)
     {
         float angle;
-        
+
         if (movePressed) // if the mouse is pressed, set the angle to rotate to the mouse position
             angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         else // otherwise set the angle to the rest position
@@ -155,7 +159,7 @@ public class PlayerController : MonoBehaviour
 
         // Carry out the rotation
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);      
+        flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
     }
     private void ScaleJet()
     {
@@ -164,9 +168,23 @@ public class PlayerController : MonoBehaviour
     }
     public void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
     {
-        Vector3 direction = entityPosition - transform.position;       
+        Vector3 direction = entityPosition - transform.position;
         //Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
-        rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f) );
+        rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
     }
-   
+
+    //--------------------------------------------COLLISIONS---------------------------------------------------------
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.CompareTag("Fuel"))
+        {
+            FuelScript pickup = other.GetComponent<FuelScript>();
+            if (pickup == null)
+                Debug.LogError("FuelScript Not found");
+            else
+            {
+
+            }
+        }
+    }
 }
