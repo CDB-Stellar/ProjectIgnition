@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Refuel(float amount, float maximum)
     {
-        fuel = Mathf.Min(fuel + amount, Mathf.Round(maxFuel * maximum));
+        fuel = Mathf.Max(fuel, Mathf.Round(maxFuel * maximum));
     }
 
     //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
@@ -184,7 +184,7 @@ public class PlayerController : MonoBehaviour
                 Debug.LogError("FuelScript Not found");
             else
             {
-
+                Refuel(pickup.fuelAmount, pickup.maxIncrease);
             }
         }
 
