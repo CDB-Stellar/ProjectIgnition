@@ -8,7 +8,7 @@ public static class SaveSystem
 {
     // This does the saving a loading of player data - the current level.
 
-    public static void SavePlayer(PlayerSaveLoad player)
+    public static void SavePlayer(PlayerLoader player)
     {
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/player.savefile"; //where the save file is

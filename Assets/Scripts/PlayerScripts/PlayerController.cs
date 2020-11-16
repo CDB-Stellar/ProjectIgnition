@@ -46,8 +46,7 @@ public class PlayerController : MonoBehaviour
 
 
 
-    //---------------------------------------------------------UNITY RUNTIME-----------------------------------------------------------------------------
-    // Start is called before the first frame update
+    //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
     {
         rbody = GetComponent<Rigidbody2D>();
@@ -106,7 +105,7 @@ public class PlayerController : MonoBehaviour
         fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
     }
 
-    //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
+    // FIREBALL CODE -----------------------------------------------------------------------------------------------------------------------------------------
     private void FireBallManger()
     {
         if (shootPressed && !hasFireBall)
@@ -147,7 +146,7 @@ public class PlayerController : MonoBehaviour
         isFireballMaxSize = false;
     }
 
-    //----------------------------------------------------------------------- MOVEMENT CODE ------------------------------------------------------------------------
+    // MOVEMENT CODE -----------------------------------------------------------------------------------------------------------------------------------------
     private void PointJet(Vector3 dir)
     {
         float angle;
@@ -173,7 +172,7 @@ public class PlayerController : MonoBehaviour
         rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
     }
 
-    //--------------------------------------------COLLISIONS---------------------------------------------------------
+    // COLLISIONS---------------------------------------------------------------------------------------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Sees if the player collided with fuel

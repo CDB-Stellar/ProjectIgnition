@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 using UnityEngine;
-using UnityEngine.SceneManagement; //to get current scene
-using System.IO; //to work with files
+using System.IO;
 
-public class PlayerSaveLoad : MonoBehaviour
+public class PlayerLoader : MonoBehaviour
 {
     // Public Variables
     public int currentLevel = 1; //level 1 by default
@@ -12,8 +12,6 @@ public class PlayerSaveLoad : MonoBehaviour
 
     // Private Variables
     private int unlockedLevel = 1; //level 1 unlocked by default
-
-    // Start is called before the first frame update
     void Start()
     {
         // Unlock certain levels from the main menu
@@ -25,7 +23,7 @@ public class PlayerSaveLoad : MonoBehaviour
             unlockedLevel = data.level;
             Debug.Log("file exists, unlocked level: " + unlockedLevel);
         }
-        
+
         currentLevel = SceneManager.GetActiveScene().buildIndex;
         if (currentLevel > unlockedLevel) //if the current level is a higher build index than unlocked level
             SavePlayer(); //save every time the player gets to higher level
@@ -36,31 +34,14 @@ public class PlayerSaveLoad : MonoBehaviour
         // Game Event
         GameEvents.current.onPlayerDeath += ShowUI; //add ShowUI function to the queue
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
-
     public void ShowUI()
     {
-        // Show the respawn UI
-        respawnUI.SetActive(true);
+        respawnUI.SetActive(true); // Show the respawn UI
     }
-    
+
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
         Debug.Log("player data has been saved");
     }
-
-    // This function can change, doesn't do anything rn
-    //public void LoadSpawn()
-    //{
-    //    PlayerData data = SaveSystem.LoadPlayer();
-    //    string checkpointName = data.checkpoint;
-    //    Transform bonfire = GameObject.Find(checkpointName).transform;
-    //    Transform spawn = bonfire.Find("PlayerSpawn");
-    //}
 }

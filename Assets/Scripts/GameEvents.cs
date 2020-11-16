@@ -7,7 +7,6 @@ public class GameEvents : MonoBehaviour
 {
     public static GameEvents current;
 
-
     private void Awake()
     {
         current = this;
@@ -23,7 +22,7 @@ public class GameEvents : MonoBehaviour
     public Action onPlayerDeath;
     
 
-    //Fireball Event Methods
+    //Fireball Event Methods ---------------------------------------------------------------------------------------------------------------------------------
     public void GrowFireball(float growthAmount)
     {
         onGrowFireball?.Invoke(growthAmount);
@@ -41,7 +40,7 @@ public class GameEvents : MonoBehaviour
         onApplyForceToPlayer?.Invoke(fireBallPos, lifeTime);
     }
     
-    //PlayerEvents
+    //PlayerEvents -------------------------------------------------------------------------------------------------------------------------------------------
     public void PlayerDeath()
     {
         onPlayerDeath?.Invoke();
