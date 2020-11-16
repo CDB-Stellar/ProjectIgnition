@@ -11,6 +11,7 @@ TagManager:
   - turn
   - END_LEVEL
   - PlayerProjectile
+  - Fuel
   layers:
   - Default
   - TransparentFX
