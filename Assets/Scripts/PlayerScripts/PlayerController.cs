@@ -176,6 +176,7 @@ public class PlayerController : MonoBehaviour
     //--------------------------------------------COLLISIONS---------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // Sees if the player collided with fuel
         if (other.CompareTag("Fuel"))
         {
             FuelScript pickup = other.GetComponent<FuelScript>();
@@ -185,6 +186,12 @@ public class PlayerController : MonoBehaviour
             {
 
             }
+        }
+
+        // Sees if player collided with something that will kill you
+        if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
+        {
+            GameEvents.current.PlayerDeath();
         }
     }
 }
