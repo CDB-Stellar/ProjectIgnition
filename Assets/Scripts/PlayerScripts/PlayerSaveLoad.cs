@@ -8,6 +8,7 @@ public class PlayerSaveLoad : MonoBehaviour
 {
     // Public Variables
     public int currentLevel = 1; //level 1 by default
+    public GameObject respawnUI = GameObject.Find("RespawnCanvas");
 
     // Private Variables
     private int unlockedLevel = 1; //level 1 unlocked by default
@@ -30,7 +31,7 @@ public class PlayerSaveLoad : MonoBehaviour
             SavePlayer(); //save every time the player gets to higher level
 
         // Hide the respawn UI
-        GameObject.Find("RespawnCanvas").SetActive(false);
+        respawnUI.SetActive(false);
 
         // Game Event
         GameEvents.current.onPlayerDeath += ShowUI; //add ShowUI function to the queue
@@ -45,7 +46,7 @@ public class PlayerSaveLoad : MonoBehaviour
     public void ShowUI()
     {
         // Show the respawn UI
-        GameObject.Find("RespawnCanvas").SetActive(true);
+        respawnUI.SetActive(true);
     }
     
     public void SavePlayer()
