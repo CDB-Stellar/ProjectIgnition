@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Refuel(float amount, float maximum)
     {
-        fuel = Mathf.Max(fuel, Mathf.Round(maxFuel * maximum));
+        fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
     }
 
     //---------------------------------------------------------Fireball Code-----------------------------------------------------------------------------
