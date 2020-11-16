@@ -31,6 +31,9 @@ public class PlayerSaveLoad : MonoBehaviour
 
         // Hide the respawn UI
         GameObject.Find("RespawnCanvas").SetActive(false);
+
+        // Game Event
+        GameEvents.current.onPlayerDeath += ShowUI; //add ShowUI function to the queue
     }
 
     // Update is called once per frame
@@ -44,19 +47,7 @@ public class PlayerSaveLoad : MonoBehaviour
         // Show the respawn UI
         GameObject.Find("RespawnCanvas").SetActive(true);
     }
-
-    //private void OnTriggerEnter2D(Collider2D other)
-    //{
-    //    // I undid everything else I did until we can figure out the functionality later
-    //    if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
-    //    {
-    //        // Show the respawn UI
-    //        //GameObject.Find("RespawnCanvas").SetActive(true);
-
-    //        SceneManager.LoadScene("GameOver");
-    //    }
-    //}    
-
+    
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
