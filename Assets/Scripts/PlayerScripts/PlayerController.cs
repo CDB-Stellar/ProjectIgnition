@@ -20,6 +20,8 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private LayerMask ground;
 
     [Header("Jet Properties")]
+    [SerializeField] private float passiveDecayAmount;
+    [SerializeField] private float jetDecayAmount;
     [SerializeField] private float jetRotationSpeed = 5f;
     [SerializeField] private Vector3 jetRestPosition;
 
@@ -84,6 +86,11 @@ public class PlayerController : MonoBehaviour, IResettable
                     jetDirection.x = 0f;               
                
                 rbody.AddForce(jetDirection);
+                ReduceFuel(jetDecayAmount);
+            }
+            else
+            {
+                ReduceFuel(passiveDecayAmount);
             }
 
             FireBallManger();
@@ -101,12 +108,15 @@ public class PlayerController : MonoBehaviour, IResettable
     // GAMEPLAY CODE -----------------------------------------------------------------------------------------------------------------------------------------
     public void ResetSelf()
     {
+        //Reset Player for Respawn
+        fuel = maxFuel * currentCheckPoint.startFuel;
         flameJetPSController.StartEmission();
         transform.position = currentCheckPoint.transform.position;
         isDead = false;
     }
     public void DisableSelf()
     {
+        //Disable Player for Death
         flameJetPSController.StopEmission();        
         isDead = true;
     }
@@ -114,8 +124,15 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         if (currentCheckPoint == null)
             currentCheckPoint = newCheckPoint;
-        else if (newCheckPoint.Priority > currentCheckPoint.Priority)        
+        else if (newCheckPoint.priority > currentCheckPoint.priority)        
             currentCheckPoint = newCheckPoint;        
+    }
+    private void ReduceFuel(float amount)
+    {
+        if (fuel < 0.0f)        
+            GameEvents.current.PlayerDeath();
+        else
+            fuel -= amount;
     }
     private bool IsTouchingLayer(LayerMask layerMask)
     {
@@ -155,7 +172,7 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         if (sizeChangeTimer <= fireballGrowthRate)
         {
-            fuel -= fireballGrowthAmount;
+            ReduceFuel(fireballGrowthAmount);
             GameEvents.current.GrowFireball(fireballGrowthAmount);
             sizeChangeTimer = 0.0f;
         }
@@ -212,10 +229,21 @@ public class PlayerController : MonoBehaviour, IResettable
         {
             FuelScript pickup = other.GetComponent<FuelScript>();
             if (pickup == null)
+            {
                 Debug.LogError("FuelScript Not found");
-            else            
-                Refuel(pickup.fuelAmount, pickup.maxIncrease);            
-        }       
+            }
+            else
+            {
+                if (pickup.isChemical)
+                {
+                    //TODO  
+                }
+                else
+                {
+                    Refuel(pickup.fuelAmount, pickup.maxIncrease);
+                }
+            }
+        }  
 
         if (other.CompareTag("Checkpoint"))
         {

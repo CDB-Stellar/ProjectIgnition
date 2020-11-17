@@ -26,7 +26,9 @@ public class FireBall : MonoBehaviour
 
         // Subsribe Events       
         GameEvents.current.onGrowFireball += Grow; 
-        GameEvents.current.onLaunchFireBall += LaunchFireBall; 
+        GameEvents.current.onLaunchFireBall += LaunchFireBall;
+
+        GameEvents.current.onPlayerDeath += DeleteFireball;
     }
     void FixedUpdate()
     {
@@ -90,8 +92,13 @@ public class FireBall : MonoBehaviour
     private void Explode()
     {
         GameEvents.current.ApplyForceToPlayer(transform.position, lifeTime);
-        GameEvents.current.onGrowFireball -= Grow; 
-        GameEvents.current.onLaunchFireBall -= LaunchFireBall; 
+        GameEvents.current.onGrowFireball -= Grow;
+        GameEvents.current.onLaunchFireBall -= LaunchFireBall;
+        
+    }
+    private void DeleteFireball()
+    {
+        
     }
     private void OnCollisionEnter2D(Collision2D other)
     {

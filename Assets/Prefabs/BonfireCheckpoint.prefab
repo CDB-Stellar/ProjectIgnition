@@ -142,5 +142,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 401cce61a3b37f44ba787405ec0dc4d2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  respawnPoint: {fileID: 0}
-  Priority: 0
+  priority: 0
+  startFuel: 1
