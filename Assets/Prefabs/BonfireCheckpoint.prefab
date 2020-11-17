@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2483943810896822253}
   - component: {fileID: 2483943810896822227}
   - component: {fileID: 5109900421668780704}
+  - component: {fileID: 4236905877699696283}
   m_Layer: 0
   m_Name: BonfireCheckpoint
   m_TagString: Checkpoint
@@ -129,3 +130,17 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1.3013585}
   m_EdgeRadius: 0
+--- !u!114 &4236905877699696283
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2483943810896822254}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 401cce61a3b37f44ba787405ec0dc4d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  respawnPoint: {fileID: 0}
+  Priority: 0

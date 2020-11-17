@@ -1,15 +1,14 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Assets.Scripts;
 
-public class PlayerController : MonoBehaviour
+public class PlayerController : MonoBehaviour, IResettable
 {
     //public Varibles
     [Header("Object References")]
     [SerializeField] private Camera cam;
     [SerializeField] private Transform flameJet;
     [SerializeField] private GameObject fireballPREFAB;
+    [SerializeField] private CheckPoint currentCheckPoint;
 
     [Header("Player Properties")]
     [SerializeField] private float speed;
@@ -62,6 +61,9 @@ public class PlayerController : MonoBehaviour
 
         GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
+
+        GameEvents.current.onPlayerDeath += DisableSelf;
+        GameEvents.current.onPlayerRespawn += ResetSelf;
     }
     private void Update()
     {
@@ -95,26 +97,39 @@ public class PlayerController : MonoBehaviour
             PointJet(GetVectorToMousePos());
         }
     }
-    // MISC CODE? NOT ENOUGH TO ORGANIZE ---------------------------------------------------------------------------------------------------------------------
-    private Vector2 GetVectorToMousePos()
+
+    // GAMEPLAY CODE -----------------------------------------------------------------------------------------------------------------------------------------
+    public void ResetSelf()
     {
-        Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-        return jetDir.normalized;
+        flameJetPSController.StartEmission();
+        transform.position = currentCheckPoint.transform.position;
+        isDead = false;
+    }
+    public void DisableSelf()
+    {
+        flameJetPSController.StopEmission();        
+        isDead = true;
+    }
+    private void CompairCheckPoints(CheckPoint newCheckPoint)
+    {
+        if (currentCheckPoint == null)
+            currentCheckPoint = newCheckPoint;
+        else if (newCheckPoint.Priority > currentCheckPoint.Priority)        
+            currentCheckPoint = newCheckPoint;        
     }
     private bool IsTouchingLayer(LayerMask layerMask)
     {
         return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
     }
+    private Vector2 GetVectorToMousePos()
+    {
+        Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+        return jetDir.normalized;
+    }
     private void Refuel(float amount, float maximum)
     {
         fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
-    }
-    private void Die()
-    {
-        flameJetPSController.StopEmission();
-        GameEvents.current.PlayerDeath();
-        isDead = true;
-    }
+    }   
 
     // FIREBALL CODE -----------------------------------------------------------------------------------------------------------------------------------------
     private void FireBallManger()
@@ -186,22 +201,29 @@ public class PlayerController : MonoBehaviour
     // COLLISIONS---------------------------------------------------------------------------------------------------------------------------------------------
     private void OnTriggerEnter2D(Collider2D other)
     {
+        // Sees if player collided with something that will kill you
+        if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
+        {
+            GameEvents.current.PlayerDeath();
+        }
+
         // Sees if the player collided with fuel
         if (other.CompareTag("Fuel"))
         {
             FuelScript pickup = other.GetComponent<FuelScript>();
             if (pickup == null)
                 Debug.LogError("FuelScript Not found");
-            else
-            {
-                Refuel(pickup.fuelAmount, pickup.maxIncrease);
-            }
-        }
+            else            
+                Refuel(pickup.fuelAmount, pickup.maxIncrease);            
+        }       
 
-        // Sees if player collided with something that will kill you
-        if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
+        if (other.CompareTag("Checkpoint"))
         {
-            Die();
+            CheckPoint newCheckPoint = other.GetComponent<CheckPoint>();
+            if (newCheckPoint == null)
+                Debug.LogError("Collided with Checkpoint, but Script not found");
+            else
+                CompairCheckPoints(newCheckPoint);
         }
     }
 
@@ -210,5 +232,5 @@ public class PlayerController : MonoBehaviour
     {
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(transform.position, layerDetectionRadius);
-    }
+    }    
 }

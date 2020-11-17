@@ -20,6 +20,7 @@ public class GameEvents : MonoBehaviour
 
     //Player Events
     public Action onPlayerDeath;
+    public Action onPlayerRespawn;
     
 
     //Fireball Event Methods ---------------------------------------------------------------------------------------------------------------------------------
@@ -44,6 +45,10 @@ public class GameEvents : MonoBehaviour
     public void PlayerDeath()
     {
         onPlayerDeath?.Invoke();
+    }
+    public void PlayerRespawn()
+    {
+        onPlayerRespawn?.Invoke();
     }
 
 

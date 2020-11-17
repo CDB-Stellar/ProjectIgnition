@@ -29,16 +29,24 @@ public class PlayerLoader : MonoBehaviour
             SavePlayer(); //save every time the player gets to higher level
 
         // Hide the respawn UI
-        respawnUI.SetActive(false);
+        HideUI();
 
         // Game Event
-        GameEvents.current.onPlayerDeath += ShowUI; //add ShowUI function to the queue
+        GameEvents.current.onPlayerRespawn += HideUI; // Subscribe HideUI Function to PlayerRespawnEvent 
+        GameEvents.current.onPlayerDeath += ShowUI; // Subscribe Show UI Function to PlayerDeathEvent
     }
-    public void ShowUI()
+    private void HideUI()
+    {
+        respawnUI.SetActive(false);
+    }
+    private void ShowUI()
     {
         respawnUI.SetActive(true); // Show the respawn UI
     }
-
+    public void Respawn()
+    {
+        GameEvents.current.PlayerRespawn();
+    }
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
