@@ -976,7 +976,7 @@ MonoBehaviour:
   fireballPREFAB: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
   currentCheckPoint: {fileID: 0}
   speed: 10
-  maxGroundSpeed: 8
+  maxGroundSpeed: 6
   maxFuel: 1000
   fuel: 1000
   launchForceFactor: 2
@@ -984,6 +984,8 @@ MonoBehaviour:
   ground:
     serializedVersion: 2
     m_Bits: 1024
+  passiveDecayAmount: 0.1
+  jetDecayAmount: 0.5
   jetRotationSpeed: 3
   jetRestPosition: {x: 0, y: 1, z: 0}
   fireballCoolDown: 1
