@@ -34,11 +34,14 @@ public class PlayerController : MonoBehaviour
 
     //private Varibles
     private Rigidbody2D rbody;
+    private ParticleController bodyPSController, flameJetPSController;
+
     private bool hasFireBall = false;
     private bool shootPressed;
     private bool movePressed;
     private bool isFireballMaxSize;
     private bool isOnGround;
+    private bool isDead;
 
     //tick timers
     private float fireRateTimer;
@@ -54,6 +57,9 @@ public class PlayerController : MonoBehaviour
         shootPressed = false;
         movePressed = false;
 
+        bodyPSController = GetComponent<ParticleController>();
+        flameJetPSController = flameJet.GetComponent<ParticleController>();
+
         GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
     }
@@ -62,35 +68,33 @@ public class PlayerController : MonoBehaviour
         shootPressed = Input.GetMouseButton(1);
         movePressed = Input.GetMouseButton(0);
     }
-
-    // Update is called once per frame
     void FixedUpdate()
     {
-        isOnGround = IsTouchingLayer(ground);
-        Debug.Log("Is touching the ground?: " + isOnGround);
-
-        if (movePressed)
+        if (!isDead)
         {
-            Vector2 jetDirection = -GetVectorToMousePos() * speed;
+            isOnGround = IsTouchingLayer(ground);
+            if (movePressed)
+            {
+                Vector2 jetDirection = -GetVectorToMousePos() * speed;
 
-            if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)
-                jetDirection.x = 0f;
+                if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)
+                    jetDirection.x = 0f;
 
-            rbody.AddForce(jetDirection);
+                rbody.AddForce(jetDirection);
+            }
+
+            FireBallManger();
+
+            if (!hasFireBall && fireRateTimer < fireballCoolDown)
+                fireRateTimer += Time.deltaTime;
+
+            PointJet(GetVectorToMousePos());
+            ScaleJet();
+
+            PointJet(GetVectorToMousePos());
         }
-
-        FireBallManger();
-
-        if (!hasFireBall && fireRateTimer < fireballCoolDown)
-            fireRateTimer += Time.deltaTime;
-
-        PointJet(GetVectorToMousePos());
-        ScaleJet();
-
-
-
-        PointJet(GetVectorToMousePos());
     }
+    // MISC CODE? NOT ENOUGH TO ORGANIZE ---------------------------------------------------------------------------------------------------------------------
     private Vector2 GetVectorToMousePos()
     {
         Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
@@ -103,6 +107,13 @@ public class PlayerController : MonoBehaviour
     private void Refuel(float amount, float maximum)
     {
         fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
+    }
+
+    private void Die()
+    {
+        flameJetPSController.StopEmission();
+        GameEvents.current.PlayerDeath();
+        isDead = true;
     }
 
     // FIREBALL CODE -----------------------------------------------------------------------------------------------------------------------------------------
@@ -190,7 +201,7 @@ public class PlayerController : MonoBehaviour
         // Sees if player collided with something that will kill you
         if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
         {
-            GameEvents.current.PlayerDeath();
+            Die();
         }
     }
 }
