@@ -77,9 +77,10 @@ public class PlayerController : MonoBehaviour
             {
                 Vector2 jetDirection = -GetVectorToMousePos() * speed;
 
-                if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)
-                    jetDirection.x = 0f;
-
+                Debug.Log(isOnGround);
+                if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)                
+                    jetDirection.x = 0f;               
+               
                 rbody.AddForce(jetDirection);
             }
 
@@ -108,7 +109,6 @@ public class PlayerController : MonoBehaviour
     {
         fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
     }
-
     private void Die()
     {
         flameJetPSController.StopEmission();
@@ -203,5 +203,12 @@ public class PlayerController : MonoBehaviour
         {
             Die();
         }
+    }
+
+    // GIZMOSE------------------------------------------------------------------------------------------------------------------------------------------------
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.cyan;
+        Gizmos.DrawWireSphere(transform.position, layerDetectionRadius);
     }
 }

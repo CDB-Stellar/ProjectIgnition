@@ -992,7 +992,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   currentLevel: 1
-  respawnUI: {fileID: 0}
+  respawnUI: {fileID: 1214969036}
 --- !u!114 &5216117324486384267
 MonoBehaviour:
   m_ObjectHideFlags: 0
