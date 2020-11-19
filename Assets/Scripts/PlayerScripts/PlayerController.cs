@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using Assets.Scripts;
+using System.Collections.Generic;
 
 public class PlayerController : MonoBehaviour, IResettable
 {
@@ -35,7 +36,7 @@ public class PlayerController : MonoBehaviour, IResettable
 
     //private Varibles
     private Rigidbody2D rbody;
-    private ParticleController bodyPSController, flameJetPSController;
+    private List<ParticleController> firePSCNormal, firePSCChemical;
 
     private bool hasFireBall = false;
     private bool shootPressed;
@@ -58,8 +59,13 @@ public class PlayerController : MonoBehaviour, IResettable
         shootPressed = false;
         movePressed = false;
 
-        bodyPSController = GetComponent<ParticleController>();
-        flameJetPSController = flameJet.GetComponent<ParticleController>();
+        Debug.Log(transform.GetChild(0).GetChild(0).GetComponent<ParticleController>());
+        ParticleController flameBodyParticles = transform.GetChild(0).GetChild(0).GetComponent<ParticleController>();
+        //firePSCNormal[0] = flameBodyParticles; //Get PSC for BodyParticles
+        //if (firePSCNormal[0] == null)
+        //{
+        //    Debug.Log("Was not found");
+        //}
 
         GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
@@ -110,14 +116,14 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         //Reset Player for Respawn
         fuel = maxFuel * currentCheckPoint.startFuel;
-        flameJetPSController.StartEmission();
+        //flameJetPSController.StartEmission();
         transform.position = currentCheckPoint.transform.position;
         isDead = false;
     }
     public void DisableSelf()
     {
         //Disable Player for Death
-        flameJetPSController.StopEmission();        
+        //flameJetPSController.StopEmission();        
         isDead = true;
     }
     private void CompairCheckPoints(CheckPoint newCheckPoint)
