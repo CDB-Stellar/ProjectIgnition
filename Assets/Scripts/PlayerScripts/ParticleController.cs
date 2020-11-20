@@ -6,19 +6,27 @@ public class ParticleController : MonoBehaviour
 {
     private ParticleSystem targetParticleSystem;
     private float defaultEmissionRate;
+
+    private ParticleSystem.EmissionModule emissionModule;
     void Start()
     {
         targetParticleSystem = gameObject.GetComponent<ParticleSystem>();
         defaultEmissionRate = targetParticleSystem.emission.rateOverTime.constant;
+        
+        emissionModule = targetParticleSystem.emission;
     }   
     public void StopEmission()
     {
-        ParticleSystem.EmissionModule em = targetParticleSystem.emission;
-        em.enabled = false;
+
+        emissionModule.enabled = false;
     }
     public void StartEmission()
     {
-        ParticleSystem.EmissionModule em = targetParticleSystem.emission;
-        em.enabled = true;
+
+        emissionModule.enabled = true;
+    }
+    public bool isEmmiting()
+    {
+        return emissionModule.enabled;
     }
 }

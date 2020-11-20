@@ -12,6 +12,7 @@ TagManager:
   - END_LEVEL
   - PlayerProjectile
   - Fuel
+  - ChemicalFuel
   layers:
   - Default
   - TransparentFX

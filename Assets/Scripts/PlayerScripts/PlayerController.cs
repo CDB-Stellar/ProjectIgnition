@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 using Assets.Scripts;
-using System.Collections.Generic;
+using System;
 
 public class PlayerController : MonoBehaviour, IResettable
 {
@@ -12,17 +12,25 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private CheckPoint currentCheckPoint;
 
     [Header("Player Properties")]
-    [SerializeField] private float speed;
-    [SerializeField] private float maxGroundSpeed;
+    [SerializeField] private float normalSpeed;
+    [SerializeField] private float chemicalSpeed;
+
+    [SerializeField] private float normalMaxVelocity;
+    [SerializeField] private float chemicalMaxVelocity;
+
     [SerializeField] private float maxFuel;
     [SerializeField] private float fuel; //In seconds of fireball life
+    [SerializeField] private float FuelDecayAmount; // the amount of fuel that get depleted
+
     [SerializeField] private float launchForceFactor;
+
     [SerializeField] private float layerDetectionRadius;
     [SerializeField] private LayerMask ground;
 
     [Header("Jet Properties")]
-    [SerializeField] private float passiveDecayAmount;
-    [SerializeField] private float jetDecayAmount;
+    [SerializeField] private float normalDecayMultiplier;
+    [SerializeField] private float chemicalDecayMultiplier;
+
     [SerializeField] private float jetRotationSpeed = 5f;
     [SerializeField] private Vector3 jetRestPosition;
 
@@ -31,12 +39,13 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private float fireballGrowthRate;  //the amount of time in seconds that a growth tick fires
     [SerializeField] private float fireballGrowthAmount;
     [SerializeField] private float fireballLaunchSpeed;
-    [SerializeField] private float fireballDecayRate; // length og time in seconds between each decay tick
-    [SerializeField] private float fireballDecayAmount; //range
+    [SerializeField] private float fireballDecayRate; // length of time in seconds between each decay tick
+    [SerializeField] private float fireballDecayAmount; 
 
     //private Varibles
     private Rigidbody2D rbody;
-    private List<ParticleController> firePSCNormal, firePSCChemical;
+    private ParticleController normalBodyFlamePSC, chemicalBodyFlamePSC;
+    private ParticleController normalJetFlamePSC, chemicalJetFlamePSC;
 
     private bool hasFireBall = false;
     private bool shootPressed;
@@ -44,13 +53,13 @@ public class PlayerController : MonoBehaviour, IResettable
     private bool isFireballMaxSize;
     private bool isOnGround;
     private bool isDead;
+    private bool isInChemicalCombustion;
 
     //tick timers
     private float fireRateTimer;
     private float sizeChangeTimer;
-
-
-
+    private float remainingCombustionTimeTimer;
+   
     //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
     {
@@ -60,12 +69,14 @@ public class PlayerController : MonoBehaviour, IResettable
         movePressed = false;
 
         Debug.Log(transform.GetChild(0).GetChild(0).GetComponent<ParticleController>());
-        ParticleController flameBodyParticles = transform.GetChild(0).GetChild(0).GetComponent<ParticleController>();
-        //firePSCNormal[0] = flameBodyParticles; //Get PSC for BodyParticles
-        //if (firePSCNormal[0] == null)
-        //{
-        //    Debug.Log("Was not found");
-        //}
+
+        //Get the Particle Controllers for the two Types of Bodies
+        normalBodyFlamePSC = transform.GetChild(0).GetChild(0).GetComponent<ParticleController>();
+        chemicalBodyFlamePSC = transform.GetChild(0).GetChild(1).GetComponent<ParticleController>();
+
+        //Get the Particle Controllers for the two Types of Flamejet
+        normalJetFlamePSC = transform.GetChild(1).GetChild(0).GetComponent<ParticleController>();
+        chemicalJetFlamePSC = transform.GetChild(1).GetChild(1).GetComponent<ParticleController>();
 
         GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
@@ -83,47 +94,50 @@ public class PlayerController : MonoBehaviour, IResettable
         if (!isDead)
         {
             isOnGround = IsTouchingLayer(ground);
+
             if (movePressed)
             {
-                Vector2 jetDirection = -GetVectorToMousePos() * speed;
-
-                Debug.Log(isOnGround);
-                if (isOnGround && Mathf.Abs(rbody.velocity.x) > maxGroundSpeed)                
-                    jetDirection.x = 0f;               
-               
-                rbody.AddForce(jetDirection);
-                ReduceFuel(jetDecayAmount);
-            }
-            else
-            {
-                ReduceFuel(passiveDecayAmount);
-            }
+                switch (isInChemicalCombustion)
+                {
+                    default:
+                    case false:
+                        ApplyFlameJet(normalSpeed, normalMaxVelocity, normalDecayMultiplier);
+                        break;
+                    case true:
+                        ApplyFlameJet(chemicalSpeed, chemicalMaxVelocity, chemicalDecayMultiplier);
+                        break;
+                }
+            }            
 
             FireBallManger();
 
             if (!hasFireBall && fireRateTimer < fireballCoolDown)
                 fireRateTimer += Time.deltaTime;
 
-            PointJet(GetVectorToMousePos());
-            ScaleJet();
-
-            PointJet(GetVectorToMousePos());
+            TransformJet(GetVectorToMousePos());
         }
     }
+    private void ApplyFlameJet(float normalSpeed, float normalMaxVelocity, float decayMultiplier)
+    {
+        Vector2 jetDirection = -GetVectorToMousePos() * normalSpeed;
 
+        if (isOnGround && Mathf.Abs(rbody.velocity.x) > normalMaxVelocity)
+            jetDirection.x = 0f;
+
+        rbody.AddForce(jetDirection);
+        ReduceFuel(FuelDecayAmount * normalDecayMultiplier);
+    }
     // GAMEPLAY CODE -----------------------------------------------------------------------------------------------------------------------------------------
     public void ResetSelf()
     {
         //Reset Player for Respawn
         fuel = maxFuel * currentCheckPoint.startFuel;
-        //flameJetPSController.StartEmission();
         transform.position = currentCheckPoint.transform.position;
         isDead = false;
     }
     public void DisableSelf()
     {
-        //Disable Player for Death
-        //flameJetPSController.StopEmission();        
+        //Disable Player for Death     
         isDead = true;
     }
     private void CompairCheckPoints(CheckPoint newCheckPoint)
@@ -140,6 +154,41 @@ public class PlayerController : MonoBehaviour, IResettable
         else
             fuel -= amount;
     }
+    private void Refuel(float amount, float maximum)
+    {
+        fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
+    }
+    private void SwitchBurnMode()
+    {
+        if (!isInChemicalCombustion)
+        {
+            SwitchToChemicalBurn();
+        }
+        else if (isInChemicalCombustion)
+        {
+            SwitchToNormalBurn();
+        }
+    }
+    private void SwitchToNormalBurn()
+    {
+        chemicalBodyFlamePSC.StopEmission();
+        chemicalJetFlamePSC.StopEmission();
+
+        normalBodyFlamePSC.StartEmission();
+        normalJetFlamePSC.StartEmission();
+
+        isInChemicalCombustion = false;
+    }
+    private void SwitchToChemicalBurn()
+    {
+        normalBodyFlamePSC.StopEmission();
+        normalJetFlamePSC.StopEmission();
+
+        chemicalBodyFlamePSC.StartEmission();
+        chemicalJetFlamePSC.StartEmission();
+
+        isInChemicalCombustion = true;
+    }
     private bool IsTouchingLayer(LayerMask layerMask)
     {
         return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
@@ -149,10 +198,7 @@ public class PlayerController : MonoBehaviour, IResettable
         Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         return jetDir.normalized;
     }
-    private void Refuel(float amount, float maximum)
-    {
-        fuel = Mathf.Max(fuel, Mathf.Min(maximum * maxFuel, fuel + amount));
-    }   
+     
 
     // FIREBALL CODE -----------------------------------------------------------------------------------------------------------------------------------------
     private void FireBallManger()
@@ -168,6 +214,8 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         hasFireBall = true;
         fireRateTimer = 0.0f;
+
+
         Instantiate(
             fireballPREFAB,
             transform.position,
@@ -196,7 +244,8 @@ public class PlayerController : MonoBehaviour, IResettable
     }
 
     // MOVEMENT CODE -----------------------------------------------------------------------------------------------------------------------------------------
-    private void PointJet(Vector3 dir)
+    
+    private void TransformJet(Vector3 dir)
     {
         float angle;
 
@@ -208,13 +257,16 @@ public class PlayerController : MonoBehaviour, IResettable
         // Carry out the rotation
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
         flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
-    }
-    private void ScaleJet()
-    {
+
+        // Scale the Jet to the appropriate size
         float jetSize = fuel / maxFuel;
-        flameJet.localScale = new Vector3(jetSize, jetSize, 1f);
+        foreach (Transform transform in flameJet.GetComponentInChildren<Transform>())
+        {
+            transform.localScale = new Vector3(jetSize, jetSize, 1f);
+        }
+        
     }
-    public void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
+    private void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
     {
         Vector3 direction = entityPosition - transform.position;
         //Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
@@ -225,32 +277,23 @@ public class PlayerController : MonoBehaviour, IResettable
     private void OnTriggerEnter2D(Collider2D other)
     {
         // Sees if player collided with something that will kill you
-        if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
-        {
-            GameEvents.current.PlayerDeath();
-        }
+        if (other.CompareTag("Traps") || other.CompareTag("Enemy"))        
+            GameEvents.current.PlayerDeath();        
 
         // Sees if the player collided with fuel
         if (other.CompareTag("Fuel"))
         {
             FuelScript pickup = other.GetComponent<FuelScript>();
             if (pickup == null)
-            {
-                Debug.LogError("FuelScript Not found");
-            }
-            else
-            {
-                if (pickup.isChemical)
-                {
-                    //TODO  
-                }
-                else
-                {
-                    Refuel(pickup.fuelAmount, pickup.maxIncrease);
-                }
-            }
-        }  
+                Debug.LogError("FuelScript Not found");            
+            else                                         
+                Refuel(pickup.fuelAmount, pickup.maxIncrease);         
+        }
 
+        if (other.CompareTag("ChemicalFuel"))
+            SwitchBurnMode();
+
+        // Sees if the player collided with a checkpoint
         if (other.CompareTag("Checkpoint"))
         {
             CheckPoint newCheckPoint = other.GetComponent<CheckPoint>();
