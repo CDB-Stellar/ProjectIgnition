@@ -696,7 +696,19 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1883723100}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 3267026587133420856}
+        m_TargetAssemblyTypeName: PlayerLoader, Assembly-CSharp
+        m_MethodName: LoadMenu
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &2002139224
 GameObject:
   m_ObjectHideFlags: 0
@@ -10632,7 +10644,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 1
   m_Sprite: {fileID: 21300000, guid: c1148a30fcd01f54e8f27852c6111a8e, type: 3}
   m_Color: {r: 1, g: 0.44002408, b: 0.1462264, a: 1}
   m_FlipX: 0
@@ -10693,7 +10705,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6d9165190ae9334aa779bbd0b31a9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cam: {fileID: 0}
   flameJet: {fileID: 2986287513102310554}
   fireballPREFAB: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
   currentCheckPoint: {fileID: 0}

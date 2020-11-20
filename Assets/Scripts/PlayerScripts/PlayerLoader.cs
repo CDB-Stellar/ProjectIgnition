@@ -34,6 +34,7 @@ public class PlayerLoader : MonoBehaviour
         // Game Event
         GameEvents.current.onPlayerRespawn += HideUI; // Subscribe HideUI Function to PlayerRespawnEvent 
         GameEvents.current.onPlayerDeath += ShowUI; // Subscribe Show UI Function to PlayerDeathEvent
+        GameEvents.current.onPlayerLoadMenu += LoadMainMenu; // Subscribe LoadMainMenu Function to PlayerLoadMenu
     }
     private void HideUI()
     {
@@ -47,9 +48,17 @@ public class PlayerLoader : MonoBehaviour
     {
         GameEvents.current.PlayerRespawn();
     }
+    public void LoadMenu()
+    {
+        GameEvents.current.PlayerLoadMenu();
+    }
     public void SavePlayer()
     {
         SaveSystem.SavePlayer(this);
         Debug.Log("player data has been saved");
+    }
+    public void LoadMainMenu()
+    {
+        SceneManager.LoadScene(0);
     }
 }

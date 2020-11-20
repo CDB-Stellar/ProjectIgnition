@@ -21,7 +21,8 @@ public class GameEvents : MonoBehaviour
     //Player Events
     public Action onPlayerDeath;
     public Action onPlayerRespawn;
-    
+    public Action onPlayerLoadMenu;
+
 
     //Fireball Event Methods ---------------------------------------------------------------------------------------------------------------------------------
     public void GrowFireball(float growthAmount)
@@ -50,6 +51,8 @@ public class GameEvents : MonoBehaviour
     {
         onPlayerRespawn?.Invoke();
     }
-
-
+    public void PlayerLoadMenu()
+    {
+        onPlayerLoadMenu?.Invoke();
+    }
 }
