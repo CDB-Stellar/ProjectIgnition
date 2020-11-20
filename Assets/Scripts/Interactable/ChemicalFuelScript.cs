@@ -6,6 +6,10 @@ using Assets.Scripts;
 public class ChemicalFuelScript : MonoBehaviour, IResettable
 {
     public float CombustionTime;
+    void Start()
+    {
+        GameEvents.current.onPlayerRespawn += ResetSelf;
+    }
     public void DisableSelf()
     {
         gameObject.SetActive(false);

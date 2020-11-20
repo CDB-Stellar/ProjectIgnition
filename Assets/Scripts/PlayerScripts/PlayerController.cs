@@ -6,7 +6,6 @@ public class PlayerController : MonoBehaviour, IResettable
 {
     //public Varibles
     [Header("Object References")]
-    [SerializeField] private Camera cam;
     [SerializeField] private Transform flameJet;
     [SerializeField] private GameObject fireballPREFAB;
     [SerializeField] private CheckPoint currentCheckPoint;
@@ -194,8 +193,8 @@ public class PlayerController : MonoBehaviour, IResettable
         return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
     }
     private Vector2 GetVectorToMousePos()
-    {
-        Vector2 jetDir = cam.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+    {       
+        Vector2 jetDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         return jetDir.normalized;
     }
      
