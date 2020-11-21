@@ -1,14 +1,21 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Assets.Scripts;
 
-public class Enemy_mover : MonoBehaviour
+public class Enemy_mover : MonoBehaviour, IResettable
 {
 	public float speed;
 	public bool MoveRight;
 
-	// Use this for initialization
-	void Update()
+    private 
+        Vector3 startPos;
+
+    private void Start()
+    {
+        startPos = transform.position;
+    }    
+    private void Update()
 	{
 		// Use this for initialization
 		if (MoveRight)
@@ -22,13 +29,28 @@ public class Enemy_mover : MonoBehaviour
 			transform.localScale = new Vector2(1, 1);
 		}
 	}
-	void OnTriggerEnter2D(Collider2D trig)
+    public void ResetSelf()
+    {
+        transform.position = startPos;
+        gameObject.SetActive(true);
+    }
+
+    public void DisableSelf()
+    {
+        gameObject.SetActive(false);
+    }
+    private void OnTriggerEnter2D(Collider2D other)
 	{
-        Debug.Log("Enemy collided withsomthing");
-		if (trig.gameObject.CompareTag("turn"))
+		if (other.gameObject.CompareTag("turn"))
 		{
             MoveRight = !MoveRight;
 		}
+        if (other.gameObject.CompareTag("PlayerProjectile"))
+        {
+            DisableSelf();
+        }
 	}
+
+    
 }
 

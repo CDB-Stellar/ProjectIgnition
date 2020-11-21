@@ -106,7 +106,17 @@ public class PlayerController : MonoBehaviour, IResettable
                         ApplyFlameJet(chemicalSpeed, chemicalMaxVelocity, chemicalDecayMultiplier);
                         break;
                 }
-            }            
+            }
+
+            if (remainingCombustionTimeTimer > 0.0f)
+            {
+                remainingCombustionTimeTimer -= Time.deltaTime;
+                if (remainingCombustionTimeTimer <= 0.0f)
+                {
+                    SwitchBurnMode();
+                }
+            }
+            
 
             FireBallManger();
 
@@ -290,7 +300,16 @@ public class PlayerController : MonoBehaviour, IResettable
         }
 
         if (other.CompareTag("ChemicalFuel"))
-            SwitchBurnMode();
+        {
+            ChemicalFuelScript pickup = other.GetComponent<ChemicalFuelScript>();
+            if (pickup == null)
+                Debug.LogError("FuelScript Not found");
+            else
+            {
+                SwitchBurnMode();
+                remainingCombustionTimeTimer = pickup.combustionTime;
+            }
+        }
 
         // Sees if the player collided with a checkpoint
         if (other.CompareTag("Checkpoint"))

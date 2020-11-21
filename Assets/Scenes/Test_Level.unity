@@ -688,5 +688,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: Fuel
       objectReference: {fileID: 0}
+    - target: {fileID: 4567081725579707315, guid: ee51ea6df5896ff4ba47528b50d99b2b, type: 3}
+      propertyPath: index
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ee51ea6df5896ff4ba47528b50d99b2b, type: 3}

@@ -10710,12 +10710,12 @@ MonoBehaviour:
   currentCheckPoint: {fileID: 0}
   normalSpeed: 10
   chemicalSpeed: 20
-  normalMaxVelocity: 4
+  normalMaxVelocity: 10
   chemicalMaxVelocity: 20
   maxFuel: 1000
   fuel: 1000
-  FuelDecayAmount: 1
-  launchForceFactor: 2
+  FuelDecayAmount: 0.75
+  launchForceFactor: 2.2
   layerDetectionRadius: 0.5
   ground:
     serializedVersion: 2
@@ -10725,8 +10725,8 @@ MonoBehaviour:
   jetRotationSpeed: 3
   jetRestPosition: {x: 0, y: 1, z: 0}
   fireballCoolDown: 1
-  fireballGrowthRate: 1
-  fireballGrowthAmount: 1
+  fireballGrowthRate: 0.5
+  fireballGrowthAmount: 0.75
   fireballLaunchSpeed: 10
   fireballDecayRate: 0.2
   fireballDecayAmount: 2
