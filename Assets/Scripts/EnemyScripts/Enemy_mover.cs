@@ -5,6 +5,7 @@ using Assets.Scripts;
 
 public class Enemy_mover : MonoBehaviour, IResettable
 {
+    public float health;
 	public float speed;
 	public bool MoveRight;
 
@@ -14,6 +15,8 @@ public class Enemy_mover : MonoBehaviour, IResettable
     private void Start()
     {
         startPos = transform.position;
+
+        GameEvents.current.onPlayerRespawn += ResetSelf;
     }    
     private void Update()
 	{
@@ -47,7 +50,10 @@ public class Enemy_mover : MonoBehaviour, IResettable
 		}
         if (other.gameObject.CompareTag("PlayerProjectile"))
         {
-            DisableSelf();
+            float damage = other.GetComponent<FireBall>().GetDamage();
+            if (damage > health)            
+                DisableSelf();
+            
         }
 	}
 

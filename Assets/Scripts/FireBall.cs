@@ -18,8 +18,8 @@ public class FireBall : MonoBehaviour
     private float decayRate;
     private float decayAmount;
     
-    // Start is called before the first frame update
-    void Start()
+
+    private void Start()
     {        
         rbody = GetComponent<Rigidbody2D>();     
         anim = GetComponent<Animator>();
@@ -30,14 +30,17 @@ public class FireBall : MonoBehaviour
 
         GameEvents.current.onPlayerDeath += DeleteFireball;
     }
-    void FixedUpdate()
+    private void FixedUpdate()
     {
         if (lifeTime < 0.0f)        
             Destroy(gameObject);           
         if (isLaunched)
             Decay();
     }
-
+    public float GetDamage()
+    {
+        return lifeTime;
+    }
     public void InitalizeFireball(float decayRate, float decayAmount)
     {
         this.decayRate = decayRate;
