@@ -9,13 +9,11 @@ public class Enemy_mover : MonoBehaviour, IResettable
 	public float speed;
 	public bool MoveRight;
 
-    private 
-        Vector3 startPos;
+    private Vector3 startPos;
 
     private void Start()
     {
         startPos = transform.position;
-
         GameEvents.current.onPlayerRespawn += ResetSelf;
     }    
     private void Update()
