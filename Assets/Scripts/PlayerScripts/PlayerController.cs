@@ -142,12 +142,16 @@ public class PlayerController : MonoBehaviour, IResettable
         //Reset Player for Respawn
         fuel = maxFuel * currentCheckPoint.startFuel;
         transform.position = currentCheckPoint.transform.position;
+        SwitchToNormalBurn();
+
         isDead = false;
     }
     public void DisableSelf()
     {
         //Disable Player for Death     
         isDead = true;
+        chemicalJetFlamePSC.StopEmission();
+        normalJetFlamePSC.StopEmission();
     }
     private void CompairCheckPoints(CheckPoint newCheckPoint)
     {

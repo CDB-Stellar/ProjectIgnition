@@ -17,12 +17,10 @@ public class ParticleController : MonoBehaviour
     }   
     public void StopEmission()
     {
-
         emissionModule.enabled = false;
     }
     public void StartEmission()
     {
-
         emissionModule.enabled = true;
     }
     public bool isEmmiting()
