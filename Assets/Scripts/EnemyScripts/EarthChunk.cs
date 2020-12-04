@@ -28,11 +28,16 @@ public class EarthChunk : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Enemy") || other.CompareTag("Traps"))
-            ;   
-        else
+        if (other.CompareTag("Player") || other.CompareTag("Ground"))
+        {
+            Debug.Log(other.name);
+            Debug.Log("Dirt Clump Destroyed");
             Destroy(gameObject);
-
+        }
+        else
+        {
+            ;
+        }
     }
 }
 
