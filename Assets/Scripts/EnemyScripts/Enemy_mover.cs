@@ -17,8 +17,7 @@ public class Enemy_mover : MonoBehaviour, IResettable
         GameEvents.current.onPlayerRespawn += ResetSelf;
     }    
     private void Update()
-	{
-		// Use this for initialization
+	{		
 		if (MoveRight)
 		{
 			transform.Translate(2 * Time.deltaTime * speed, 0, 0);

@@ -66,9 +66,7 @@ public class PlayerController : MonoBehaviour, IResettable
         fireRateTimer = fireballCoolDown;
         shootPressed = false;
         movePressed = false;
-
-        Debug.Log(transform.GetChild(0).GetChild(0).GetComponent<ParticleController>());
-
+        
         //Get the Particle Controllers for the two Types of Bodies
         normalBodyFlamePSC = transform.GetChild(0).GetChild(0).GetComponent<ParticleController>();
         chemicalBodyFlamePSC = transform.GetChild(0).GetChild(1).GetComponent<ParticleController>();

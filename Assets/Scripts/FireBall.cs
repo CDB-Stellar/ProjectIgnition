@@ -7,7 +7,6 @@ public class FireBall : MonoBehaviour
 { 
 
     private Rigidbody2D rbody;
-    private PlayerController playerController;
     private Animator anim;
 
     private bool isLaunched;
