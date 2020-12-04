@@ -28,7 +28,7 @@ public class EarthChunk : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || other.CompareTag("Ground"))
+        if (other.CompareTag("Player") || other.CompareTag("Ground") || other.CompareTag("PlayerProjectile"))
         {
             Debug.Log(other.name);
             Debug.Log("Dirt Clump Destroyed");
