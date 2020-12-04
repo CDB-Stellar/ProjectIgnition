@@ -103,13 +103,25 @@ public class EarthSpirit : MonoBehaviour, IResettable
 
     public void DisableSelf()
     {
-        //TODO
+        gameObject.SetActive(false);
     }
 
     public void ResetSelf()
     {
         transform.position = startPos;
+        gameObject.SetActive(true);
     }
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (other.gameObject.CompareTag("PlayerProjectile"))
+        {
+            float damage = other.GetComponent<FireBall>().GetDamage();
+            if (damage > health)
+                DisableSelf();
+
+        }
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.green;
