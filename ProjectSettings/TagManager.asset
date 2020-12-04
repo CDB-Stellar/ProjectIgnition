@@ -13,6 +13,7 @@ TagManager:
   - PlayerProjectile
   - Fuel
   - ChemicalFuel
+  - chest
   layers:
   - Default
   - TransparentFX
