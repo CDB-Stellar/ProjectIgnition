@@ -21,11 +21,11 @@ EditorBuildSettings:
     path: Assets/Scenes/Quaking Bog.unity
     guid: 45f23758f4d1cf34c95e15e668dd236b
   - enabled: 1
-    path: Assets/Scenes/GameOver.unity
-    guid: 38cd5827f77ac8a469fd88fc8ba2fb10
-  - enabled: 1
     path: Assets/Scenes/End.unity
     guid: cbd4b96161b369443880db2f1d577649
+  - enabled: 0
+    path: Assets/Scenes/GameOver.unity
+    guid: 38cd5827f77ac8a469fd88fc8ba2fb10
   - enabled: 0
     path: Assets/Scenes/Test_Level.unity
     guid: f65ca4c01b415574799a5aa1e8214be2
