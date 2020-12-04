@@ -150,6 +150,9 @@ public class PlayerController : MonoBehaviour, IResettable
         isDead = true;
         chemicalJetFlamePSC.StopEmission();
         normalJetFlamePSC.StopEmission();
+
+        normalBodyFlamePSC.StopEmission();
+        chemicalBodyFlamePSC.StopEmission();
     }
     private void CompairCheckPoints(CheckPoint newCheckPoint)
     {
