@@ -14,6 +14,7 @@ TagManager:
   - Fuel
   - ChemicalFuel
   - chest
+  - TextOff
   layers:
   - Default
   - TransparentFX
