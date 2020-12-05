@@ -114,7 +114,7 @@ public class PlayerController : MonoBehaviour, IResettable
                 remainingCombustionTimeTimer -= Time.deltaTime;
                 if (remainingCombustionTimeTimer <= 0.0f)
                 {
-                    SwitchBurnMode();
+                    SwitchToNormalBurn();
                 }
             }
             
@@ -317,6 +317,7 @@ public class PlayerController : MonoBehaviour, IResettable
             else
             {
                 SwitchBurnMode();
+                fuel = maxFuel;
                 remainingCombustionTimeTimer = pickup.combustionTime;
             }
         }
