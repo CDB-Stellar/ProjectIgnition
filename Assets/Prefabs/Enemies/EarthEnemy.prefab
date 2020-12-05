@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7315562525187755782}
   - component: {fileID: 7315562525187755783}
   - component: {fileID: 1312478406}
+  - component: {fileID: 8457995171743740103}
   m_Layer: 0
   m_Name: EarthEnemy
   m_TagString: Enemy
@@ -167,3 +168,21 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   earthChunk: {fileID: 472784770753932241, guid: 8ac2f98fc8e152e468c8b3200b8d2de5, type: 3}
+--- !u!114 &8457995171743740103
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7315562525187755780}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6bfd86571cacb284997c208bbf5f6dd4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sounds:
+  - name: throw
+    clip: {fileID: 8300000, guid: 97c26af9f4c075740ad77d6eef169fb9, type: 3}
+    volume: 1
+    pitch: 0
+    source: {fileID: 0}

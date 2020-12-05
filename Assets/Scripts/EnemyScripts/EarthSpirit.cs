@@ -18,12 +18,14 @@ public class EarthSpirit : MonoBehaviour, IResettable
     private Vector3 startPos;
     private Vector3 playerPos;
     private Animator anim;
+    private AudioManger audioManger;
     private bool playerFound, canMoveForward, canShoot = true;
 
     private float throwCooldownTimer;
     void Start()
     {
         anim = GetComponent<Animator>();
+        audioManger = GetComponent<AudioManger>();
         GameEvents.current.onPlayerRespawn += ResetSelf;
         GameEvents.current.onPlayerDeath += StopShooting;
         startPos = transform.position;
@@ -43,6 +45,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
                 anim.SetTrigger("throw");                
                 throwCooldownTimer = throwCooldown;
                 anim.SetBool("isMoving", false);
+                audioManger.Play("throw");
                 LaunchDirt();
             }            
             else if (Vector3.Distance(transform.position, playerPos) < distanceThreshold && canMoveForward)
