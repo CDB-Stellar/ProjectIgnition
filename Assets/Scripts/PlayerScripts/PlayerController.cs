@@ -8,7 +8,7 @@ public class PlayerController : MonoBehaviour, IResettable
     [Header("Object References")]
     [SerializeField] private Transform flameJet;
     [SerializeField] private GameObject fireballPREFAB;
-    [SerializeField] private CheckPoint currentCheckPoint;
+    [SerializeField] private CheckPoint currentCheckPoint;    
 
     [Header("Player Properties")]
     [SerializeField] private float normalSpeed;
@@ -45,6 +45,7 @@ public class PlayerController : MonoBehaviour, IResettable
     private Rigidbody2D rbody;
     private ParticleController normalBodyFlamePSC, chemicalBodyFlamePSC;
     private ParticleController normalJetFlamePSC, chemicalJetFlamePSC;
+    private AudioManger audioManger;
 
     private bool hasFireBall = false;
     private bool shootPressed;
@@ -80,6 +81,8 @@ public class PlayerController : MonoBehaviour, IResettable
 
         GameEvents.current.onPlayerDeath += DisableSelf;
         GameEvents.current.onPlayerRespawn += ResetSelf;
+
+        audioManger = GetComponent<AudioManger>();  
     }
     private void Update()
     {
@@ -153,6 +156,8 @@ public class PlayerController : MonoBehaviour, IResettable
 
         normalBodyFlamePSC.StopEmission();
         chemicalBodyFlamePSC.StopEmission();
+
+        audioManger.Play("fizzle");
     }
     private void CompairCheckPoints(CheckPoint newCheckPoint)
     {

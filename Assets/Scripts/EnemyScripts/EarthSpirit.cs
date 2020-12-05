@@ -18,13 +18,14 @@ public class EarthSpirit : MonoBehaviour, IResettable
     private Vector3 startPos;
     private Vector3 playerPos;
     private Animator anim;
-    private bool playerFound, canMoveForward;
+    private bool playerFound, canMoveForward, canShoot = true;
 
     private float throwCooldownTimer;
     void Start()
     {
         anim = GetComponent<Animator>();
         GameEvents.current.onPlayerRespawn += ResetSelf;
+        GameEvents.current.onPlayerDeath += StopShooting;
         startPos = transform.position;
     }
 
@@ -35,7 +36,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
 
         canMoveForward = CheckForWall();
 
-        if (playerFound)
+        if (playerFound && canShoot)
         {
             if (throwCooldownTimer <= 0)
             {
@@ -86,6 +87,10 @@ public class EarthSpirit : MonoBehaviour, IResettable
             return true;
         }
     }
+    private void StopShooting()
+    {
+        canShoot = false;
+    }
     private bool SearchForPlayer()
     {       
         Collider2D hit = Physics2D.OverlapCircle(transform.position, detectionRadius, playerLayer);
@@ -110,6 +115,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
     {
         transform.position = startPos;
         gameObject.SetActive(true);
+        canShoot = true;
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
