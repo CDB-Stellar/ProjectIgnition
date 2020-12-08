@@ -7,7 +7,7 @@ public class LevelTransition : MonoBehaviour
 {
     void OnTriggerEnter2D(Collider2D trig)
 	{
-		if (trig.gameObject.CompareTag("Player"))
+		if (trig.gameObject.CompareTag("Player") && !trig.gameObject.GetComponent<PlayerController>().IsIncapacitated())
 		{
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1); //load next scene in queue
         }

@@ -127,6 +127,10 @@ public class PlayerController : MonoBehaviour, IResettable
             TransformJet(GetVectorToMousePos());
         }
     }
+    public bool IsIncapacitated()
+    {
+        return isDead;
+    }
     private void ApplyFlameJet(float normalSpeed, float normalMaxVelocity, float decayMultiplier)
     {
         Vector2 jetDirection = -GetVectorToMousePos() * normalSpeed;
