@@ -74,9 +74,8 @@ public class EarthSpirit : MonoBehaviour, IResettable
     }
     private void LaunchDirt()
     {
-        //Debug.Log(
-        Instantiate(earthChunk, transform.position, transform.rotation, transform).GetComponent<EarthChunk>().Initalize(playerPos - transform.position, launchSpeed);
-            //);
+        Debug.Log(gameObject.name + " is Launching Dirt");
+       Instantiate(earthChunk, transform.position, transform.rotation, transform).GetComponent<EarthChunk>().Initalize(playerPos - transform.position, launchSpeed); 
     }
     private bool CheckForWall()
     {
@@ -119,6 +118,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
         transform.position = startPos;
         gameObject.SetActive(true);
         canShoot = true;
+        playerFound = false;
     }
     private void OnTriggerEnter2D(Collider2D other)
     {
