@@ -1,109 +1,84 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class FireBall : MonoBehaviour
-{ 
-
-    private Rigidbody2D rbody;
-    private Animator anim;
-
-    private bool isLaunched;
+{
+    private Rigidbody2D _rbody;
+    private Animator _anim;
     
-    private float lifeTime;
-    private float decayTimer;
-
-    private float decayRate;
-    private float decayAmount;
+    [SerializeField] private float _decayRate;
+    [SerializeField] private float _decayAmount;
     
+    private bool _isLaunched;
+    private float _size;
+    private float _decayTimer;
 
     private void Start()
-    {        
-        rbody = GetComponent<Rigidbody2D>();     
-        anim = GetComponent<Animator>();
+    {
+        _rbody = GetComponent<Rigidbody2D>();
+        _anim = GetComponent<Animator>();
 
         // Subsribe Events       
-        GameEvents.current.onGrowFireball += Grow; 
         GameEvents.current.onLaunchFireBall += LaunchFireBall;
     }
     private void FixedUpdate()
     {
-        if (lifeTime < 0.0f)        
-            Destroy(gameObject);           
-        if (isLaunched)
+        if (_size <= 0)
+            Destroy(gameObject);
+        if (_isLaunched)
             Decay();
     }
     public float GetDamage()
     {
-        return lifeTime;
+        return _size;
     }
-    public void InitalizeFireball(float decayRate, float decayAmount)
-    {
-        this.decayRate = decayRate;
-        this.decayAmount = decayAmount;
-    }
-
     private void LaunchFireBall(Vector3 trajectory)
     {
-        if (!isLaunched)
+        if (!_isLaunched)
         {
             transform.parent = null;
-            rbody.simulated = true;
-            isLaunched = true;
-            rbody.velocity = trajectory;
-        }        
+            _rbody.simulated = true;
+            _isLaunched = true;
+            _rbody.velocity = trajectory;
+        }
     }
-    private void Grow(float growthAmount)
+    public void SetSize(float size)
     {
-        if (anim != null)
-        {
-            if (!isLaunched && !FireBallTooBig())
-            {
-                float currentSize = anim.GetFloat("fireballSize");
-                anim.SetFloat("fireballSize", currentSize + growthAmount);
-                lifeTime += growthAmount;                  
-            }
-        }               
+        _size = size;
+        _anim.SetFloat("fireballSize", _size);
     }
-    private bool FireBallTooBig()
+    public bool FullyGrown()
     {
-        if (lifeTime >= 100.0f)
+        if (_size >= 1)
         {
-
-            GameEvents.current.FireBallCompleteGrowth();
             return true;
         }
         else
-            return false;        
+        {
+            return false;
+        }
     }
     private void Decay()
     {
-        //Debug.Log("Decay Timer: " + decayTimer + ", Decay Rate:" + decayRate);
-        if (decayTimer > decayRate)
-        {            
-            anim.SetFloat("fireballSize", anim.GetFloat("fireballSize") - decayAmount);
-            lifeTime -= decayAmount;
-            decayTimer = 0.0f;
-            //Debug.Log("Decaying, LifeTime: " + lifeTime + ", FireBallSize(from animator): " + anim.GetFloat("fireballSize"));
+        if (_decayTimer > _decayRate)
+        {
+            _anim.SetFloat("fireballSize", _anim.GetFloat("fireballSize") - _decayAmount);
+            _size -= _decayAmount;
+            _decayTimer = 0.0f;
         }
-        decayTimer += Time.deltaTime;        
-    }   
+        _decayTimer += Time.deltaTime;
+    }
     private void Explode()
     {
-        GameEvents.current.ApplyForceToPlayer(transform.position, lifeTime);
-        GameEvents.current.onGrowFireball -= Grow;
-        GameEvents.current.onLaunchFireBall -= LaunchFireBall;
-        
-    }    
+        GameEvents.current.ApplyForceToPlayer(transform.position, _size);
+    }
     private void OnCollisionEnter2D(Collision2D other)
     {
-        if (isLaunched)
+        if (_isLaunched)
         {
             Explode();
             Destroy(gameObject);
         }
-            
-    }    
-    
+
+    }
+
 }

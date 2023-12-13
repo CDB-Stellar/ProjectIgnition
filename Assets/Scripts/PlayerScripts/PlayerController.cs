@@ -1,15 +1,15 @@
-﻿using UnityEngine;
-using Assets.Scripts;
-using System;
+﻿using Assets.Scripts;
+using System.Collections;
+using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IResettable
 {
     //public Varibles
     [Header("Object References")]
-    [SerializeField] private Transform flameJet;
-    [SerializeField] private GameObject fireballPREFAB;
-    [SerializeField] private CheckPoint currentCheckPoint;    
-
+    [SerializeField] private Transform _flameJet;
+    [SerializeField] private CheckPoint _currentCheckPoint;
+    [SerializeField] private FireBallShooter _fireBallShooter;
+    
     [Header("Player Properties")]
     [SerializeField] private float normalSpeed;
     [SerializeField] private float chemicalSpeed;
@@ -31,15 +31,7 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private float chemicalDecayMultiplier;
 
     [SerializeField] private float jetRotationSpeed = 5f;
-    [SerializeField] private Vector3 jetRestPosition;
-
-    [Header("Fireball Properties")]
-    [SerializeField] private float fireballCoolDown;
-    [SerializeField] private float fireballGrowthRate;  //the amount of time in seconds that a growth tick fires
-    [SerializeField] private float fireballGrowthAmount;
-    [SerializeField] private float fireballLaunchSpeed;
-    [SerializeField] private float fireballDecayRate; // length of time in seconds between each decay tick
-    [SerializeField] private float fireballDecayAmount; 
+    [SerializeField] private Vector3 jetRestPosition;    
 
     //private Varibles
     private Rigidbody2D rbody;
@@ -47,26 +39,25 @@ public class PlayerController : MonoBehaviour, IResettable
     private ParticleController normalJetFlamePSC, chemicalJetFlamePSC;
     private AudioManger audioManger;
 
-    private bool hasFireBall = false;
-    private bool shootPressed;
-    private bool movePressed;
-    private bool isFireballMaxSize;
-    private bool isOnGround;
-    private bool isDead;
-    private bool isInChemicalCombustion;
+    private bool _chargingFireball = false;
+    private bool _shootPressed;
+    private bool _movePressed;
+    private bool _isFireballMaxSize;
+    private bool _isOnGround;
+    private bool _isDead;
+    private bool _isInChemicalCombustion;
 
     //tick timers
-    private float fireRateTimer;
-    private float sizeChangeTimer;
-    private float remainingCombustionTimeTimer;
+    private float _fireRateTimer;
+    private float _sizeChangeTimer;
+    private float _remainingCombustionTimeTimer;
    
     //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
     {
         rbody = GetComponent<Rigidbody2D>();
-        fireRateTimer = fireballCoolDown;
-        shootPressed = false;
-        movePressed = false;
+        _shootPressed = false;
+        _movePressed = false;
         
         //Get the Particle Controllers for the two Types of Bodies
         normalBodyFlamePSC = transform.GetChild(0).GetChild(0).GetComponent<ParticleController>();
@@ -76,7 +67,6 @@ public class PlayerController : MonoBehaviour, IResettable
         normalJetFlamePSC = transform.GetChild(1).GetChild(0).GetComponent<ParticleController>();
         chemicalJetFlamePSC = transform.GetChild(1).GetChild(1).GetComponent<ParticleController>();
 
-        GameEvents.current.onFireBallCompleteGrowth += FireBallMaxSize;
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
 
         GameEvents.current.onPlayerDeath += DisableSelf;
@@ -86,18 +76,18 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private void Update()
     {
-        shootPressed = Input.GetMouseButton(1);
-        movePressed = Input.GetMouseButton(0);
+        _shootPressed = Input.GetMouseButton(1);
+        _movePressed = Input.GetMouseButton(0);
     }
     void FixedUpdate()
     {
-        if (!isDead)
+        if (!_isDead)
         {
-            isOnGround = IsTouchingLayer(ground);
+            _isOnGround = IsTouchingLayer(ground);
 
-            if (movePressed)
+            if (_movePressed)
             {
-                switch (isInChemicalCombustion)
+                switch (_isInChemicalCombustion)
                 {
                     default:
                     case false:
@@ -109,52 +99,56 @@ public class PlayerController : MonoBehaviour, IResettable
                 }
             }
 
-            if (remainingCombustionTimeTimer > 0.0f)
+            if (_remainingCombustionTimeTimer > 0.0f)
             {
-                remainingCombustionTimeTimer -= Time.deltaTime;
-                if (remainingCombustionTimeTimer <= 0.0f)
+                _remainingCombustionTimeTimer -= Time.deltaTime;
+                if (_remainingCombustionTimeTimer <= 0.0f)
                 {
                     SwitchToNormalBurn();
                 }
             }
             
 
-            FireBallManger();
-
-            if (!hasFireBall && fireRateTimer < fireballCoolDown)
-                fireRateTimer += Time.deltaTime;
+            FireBallManger();          
 
             TransformJet(GetVectorToMousePos());
         }
     }
     public bool IsIncapacitated()
     {
-        return isDead;
+        return _isDead;
     }
     private void ApplyFlameJet(float normalSpeed, float normalMaxVelocity, float decayMultiplier)
     {
         Vector2 jetDirection = -GetVectorToMousePos() * normalSpeed;
 
-        if (isOnGround && Mathf.Abs(rbody.velocity.x) > normalMaxVelocity)
+        if (_isOnGround && Mathf.Abs(rbody.velocity.x) > normalMaxVelocity)
             jetDirection.x = 0f;
 
         rbody.AddForce(jetDirection);
         ReduceFuel(FuelDecayAmount * normalDecayMultiplier);
     }
     // GAMEPLAY CODE -----------------------------------------------------------------------------------------------------------------------------------------
+    private void FireBallManger()
+    {
+        if (_shootPressed && !_chargingFireball)
+            _fireBallShooter.CreateFireball();
+        else if (!_shootPressed && _chargingFireball)
+            _fireBallShooter.LaunchFireball();            
+    }
     public void ResetSelf()
     {
         //Reset Player for Respawn
-        fuel = maxFuel * currentCheckPoint.startFuel;
-        transform.position = currentCheckPoint.transform.position;
+        fuel = maxFuel * _currentCheckPoint.startFuel;
+        transform.position = _currentCheckPoint.transform.position;
         SwitchToNormalBurn();
 
-        isDead = false;
+        _isDead = false;
     }
     public void DisableSelf()
     {
         //Disable Player for Death     
-        isDead = true;
+        _isDead = true;
         chemicalJetFlamePSC.StopEmission();
         normalJetFlamePSC.StopEmission();
 
@@ -165,10 +159,10 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private void CompairCheckPoints(CheckPoint newCheckPoint)
     {
-        if (currentCheckPoint == null)
-            currentCheckPoint = newCheckPoint;
-        else if (newCheckPoint.priority > currentCheckPoint.priority)        
-            currentCheckPoint = newCheckPoint;        
+        if (_currentCheckPoint == null)
+            _currentCheckPoint = newCheckPoint;
+        else if (newCheckPoint.priority > _currentCheckPoint.priority)        
+            _currentCheckPoint = newCheckPoint;        
     }
     private void ReduceFuel(float amount)
     {
@@ -183,11 +177,11 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private void SwitchBurnMode()
     {
-        if (!isInChemicalCombustion)
+        if (!_isInChemicalCombustion)
         {
             SwitchToChemicalBurn();
         }
-        else if (isInChemicalCombustion)
+        else if (_isInChemicalCombustion)
         {
             SwitchToNormalBurn();
         }
@@ -200,7 +194,7 @@ public class PlayerController : MonoBehaviour, IResettable
         normalBodyFlamePSC.StartEmission();
         normalJetFlamePSC.StartEmission();
 
-        isInChemicalCombustion = false;
+        _isInChemicalCombustion = false;
     }
     private void SwitchToChemicalBurn()
     {
@@ -210,7 +204,7 @@ public class PlayerController : MonoBehaviour, IResettable
         chemicalBodyFlamePSC.StartEmission();
         chemicalJetFlamePSC.StartEmission();
 
-        isInChemicalCombustion = true;
+        _isInChemicalCombustion = true;
     }
     private bool IsTouchingLayer(LayerMask layerMask)
     {
@@ -221,50 +215,6 @@ public class PlayerController : MonoBehaviour, IResettable
         Vector2 jetDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
         return jetDir.normalized;
     }
-     
-
-    // FIREBALL CODE -----------------------------------------------------------------------------------------------------------------------------------------
-    private void FireBallManger()
-    {
-        if (shootPressed && !hasFireBall)
-            CreateFireball();
-        else if (!shootPressed && hasFireBall)
-            LaunchFireball();
-        else if (hasFireBall && !isFireballMaxSize)
-            GrowFireBall();
-    }
-    private void CreateFireball()
-    {
-        hasFireBall = true;
-        fireRateTimer = 0.0f;
-
-
-        Instantiate(
-            fireballPREFAB,
-            transform.position,
-            transform.rotation, transform
-        ).GetComponent<FireBall>().InitalizeFireball(fireballDecayRate, fireballDecayAmount);
-    }
-    private void GrowFireBall()
-    {
-        if (sizeChangeTimer <= fireballGrowthRate)
-        {
-            ReduceFuel(fireballGrowthAmount);
-            GameEvents.current.GrowFireball(fireballGrowthAmount);
-            sizeChangeTimer = 0.0f;
-        }
-    }
-    private void FireBallMaxSize()
-    {
-        isFireballMaxSize = true;
-        fuel += fireballGrowthAmount;
-    }
-    private void LaunchFireball()
-    {
-        GameEvents.current.LaunchFireBall(GetVectorToMousePos() * fireballLaunchSpeed + rbody.velocity);
-        hasFireBall = false;
-        isFireballMaxSize = false;
-    }
 
     // MOVEMENT CODE -----------------------------------------------------------------------------------------------------------------------------------------
     
@@ -272,18 +222,18 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         float angle;
 
-        if (movePressed) // if the mouse is pressed, set the angle to rotate to the mouse position
+        if (_movePressed) // if the mouse is pressed, set the angle to rotate to the mouse position
             angle = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg - 90f;
         else // otherwise set the angle to the rest position
             angle = Mathf.Atan2(jetRestPosition.y, jetRestPosition.x) * Mathf.Rad2Deg - 90f;
 
         // Carry out the rotation
         Quaternion rotation = Quaternion.AngleAxis(angle, Vector3.forward);
-        flameJet.transform.rotation = Quaternion.Slerp(flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
+        _flameJet.transform.rotation = Quaternion.Slerp(_flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
 
         // Scale the Jet to the appropriate size
         float jetSize = fuel / maxFuel;
-        foreach (Transform transform in flameJet.GetComponentInChildren<Transform>())
+        foreach (Transform transform in _flameJet.GetComponentInChildren<Transform>())
         {
             transform.localScale = new Vector3(jetSize, jetSize, 1f);
         }
@@ -322,7 +272,7 @@ public class PlayerController : MonoBehaviour, IResettable
             {
                 SwitchBurnMode();
                 fuel = maxFuel;
-                remainingCombustionTimeTimer = pickup.combustionTime;
+                _remainingCombustionTimeTimer = pickup.combustionTime;
             }
         }
 
