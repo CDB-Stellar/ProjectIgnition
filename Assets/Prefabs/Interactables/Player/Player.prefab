@@ -10748,14 +10748,18 @@ MonoBehaviour:
   _flameJet: {fileID: 2986287513102310554}
   _currentCheckPoint: {fileID: 0}
   _fireBallShooter: {fileID: 1247706581}
-  normalSpeed: 10
-  chemicalSpeed: 20
-  normalMaxVelocity: 10
-  chemicalMaxVelocity: 20
+  normalAcceleration: 10
+  normalMaxSpeed: 8
+  normalMaxAirborneSpeed: 12
+  normalMaxAirborneClimbVelocity: 0.1
+  chemicalAcceleration: 20
+  chemicalMaxSpeed: 12
+  chemicalMaxAirborneSpeed: 15
+  chemicalMaxAirborneClimbVelocity: 4
   maxFuel: 1000
   fuel: 1000
   FuelDecayAmount: 0.25
-  launchForceFactor: 2.2
+  launchForceFactor: 200
   layerDetectionRadius: 0.5
   ground:
     serializedVersion: 2
@@ -10808,17 +10812,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2123ec08f149b7e4a9d65c933b8896bb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _fireballPrefab: {fileID: 0}
-  _fireballFireRate: 0
-  _fireballGrowthAmount: 0
-  _fireballGrowthRate: 0
-  _fireBallGrowth:
-    serializedVersion: 2
-    m_Curve: []
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  _fireballLaunchSpeed: 0
+  _fireballPrefab: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
+  _fireballFireRate: 0.1
+  _fireballLaunchSpeed: 10
+  _fireballGrowthAmount: 0.05
+  _fireballGrowthRate: 0.2
 --- !u!1 &6552350883335673588
 GameObject:
   m_ObjectHideFlags: 0

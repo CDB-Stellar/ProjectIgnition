@@ -37,9 +37,9 @@ public class GameEvents : MonoBehaviour
     {
         onFireBallCompleteGrowth?.Invoke();
     }
-    public void ApplyForceToPlayer(Vector3 fireBallPos, float lifeTime)
+    public void ApplyForceToPlayer(Vector3 fireBallPos, float strength)
     {
-        onApplyForceToPlayer?.Invoke(fireBallPos, lifeTime);
+        onApplyForceToPlayer?.Invoke(fireBallPos, strength);
     }
     
     //PlayerEvents -------------------------------------------------------------------------------------------------------------------------------------------

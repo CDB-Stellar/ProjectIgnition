@@ -4,21 +4,23 @@ public class FireBall : MonoBehaviour
 {
     private Rigidbody2D _rbody;
     private Animator _anim;
+
     
+    [SerializeField] private AnimationCurve _growthCurve;
+
+
     [SerializeField] private float _decayRate;
     [SerializeField] private float _decayAmount;
     
     private bool _isLaunched;
-    private float _size;
+    private float _size = 0; // 0 - 1 size of fireball
+    private float _growth = 0; // 0 - 1 growth of fireball
     private float _decayTimer;
 
-    private void Start()
+    private void Awake()
     {
         _rbody = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
-
-        // Subsribe Events       
-        GameEvents.current.onLaunchFireBall += LaunchFireBall;
     }
     private void FixedUpdate()
     {
@@ -31,7 +33,7 @@ public class FireBall : MonoBehaviour
     {
         return _size;
     }
-    private void LaunchFireBall(Vector3 trajectory)
+    public void LaunchFireball(Vector3 trajectory)
     {
         if (!_isLaunched)
         {
@@ -41,9 +43,10 @@ public class FireBall : MonoBehaviour
             _rbody.velocity = trajectory;
         }
     }
-    public void SetSize(float size)
+    public void Grow(float amount)
     {
-        _size = size;
+        _growth = Mathf.Min(_growth + amount, 1f);
+        _size = _growthCurve.Evaluate(_growth);
         _anim.SetFloat("fireballSize", _size);
     }
     public bool FullyGrown()
