@@ -288,7 +288,6 @@ public class PlayerController : MonoBehaviour, IResettable
     private void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
     {
         Vector3 direction = entityPosition - transform.position;
-        //Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
         rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
     }
 

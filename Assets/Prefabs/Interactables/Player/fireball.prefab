@@ -124,6 +124,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 718fa3f9984983c45a4bd7e3dc011aad, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _explosion: {fileID: 4021699944310452558, guid: a095537ecec1af94786b1d38e49eb245, type: 3}
   _growthCurve:
     serializedVersion: 2
     m_Curve:
@@ -463,8 +464,8 @@ ParticleSystem:
     startSize:
       serializedVersion: 2
       minMaxState: 3
-      scalar: 0.08
-      minScalar: 0.02
+      scalar: 0.02
+      minScalar: 0.1
       maxCurve:
         serializedVersion: 2
         m_Curve:
