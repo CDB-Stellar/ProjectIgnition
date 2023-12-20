@@ -1,5 +1,4 @@
 ﻿using Assets.Scripts;
-using Unity.Profiling;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IResettable
@@ -13,16 +12,16 @@ public class PlayerController : MonoBehaviour, IResettable
     [Header("Player Properties")]
 
     [Header("Normal Movement")]
-    [SerializeField] private float normalAcceleration;
-    [SerializeField] private float normalMaxSpeed;
-    [SerializeField] private float normalMaxAirborneHorizontalVelocity;
-    [SerializeField] private float normalMaxAirborneVerticalVelocity;
+    [SerializeField] private float acceleration;
+    [SerializeField] private float maxSpeed;
+    [SerializeField] private float maxVelocityAirX;
+    [SerializeField] private float maxVelocityAirY;
 
     [Header("Chemical Combustion Movement")]
     [SerializeField] private float chemicalAcceleration;
     [SerializeField] private float chemicalMaxSpeed;
-    [SerializeField] private float chemicalMaxAirborneHorizontalVelocity;
-    [SerializeField] private float chemicalMaxAirborneVertcalVelocity;
+    [SerializeField] private float chemicalMaxVelocityAirX;
+    [SerializeField] private float chemicalMaxVelocityAirY;
 
     [Header("Fuel")]
 
@@ -55,6 +54,8 @@ public class PlayerController : MonoBehaviour, IResettable
     private bool _isInChemicalCombustion;
 
     private float _remainingCombustionTime;
+
+    
 
     //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
@@ -96,18 +97,18 @@ public class PlayerController : MonoBehaviour, IResettable
                     default:
                     case false:
                         ApplyFlameJet(
-                            normalAcceleration,
-                            normalMaxSpeed,
-                            normalMaxAirborneHorizontalVelocity,
-                            normalMaxAirborneVerticalVelocity,
+                            acceleration,
+                            maxSpeed,
+                            maxVelocityAirX,
+                            maxVelocityAirY,
                             normalDecayMultiplier);
                         break;
                     case true:
                         ApplyFlameJet(
                             chemicalAcceleration,
                             chemicalMaxSpeed,
-                            chemicalMaxAirborneVertcalVelocity,
-                            chemicalMaxAirborneVertcalVelocity,
+                            chemicalMaxVelocityAirX,
+                            chemicalMaxVelocityAirY,
                             chemicalDecayMultiplier);
                         break;
 
@@ -251,34 +252,36 @@ public class PlayerController : MonoBehaviour, IResettable
         }
 
     }
-    private void ApplyFlameJet(float acceleration, float maxSpeed, float maxAirborneVerticalVelocity, float maxClimbSpeed, float decayMultiplier)
+    private void ApplyFlameJet(float acceleration, float maxSpeed, float maxVelAirX, float maxVelAirY, float decayMultiplier)
     {
         Vector2 dir = -GetVectorFromMousePos() * acceleration;
         Vector2 vel = rbody.velocity;
 
-
-        // Modify inputs if the character is airborne
+        // In Air
         if (!_isOnGround)
         {
-            // Lock y component to stop 
-            if (vel.y > maxAirborneVerticalVelocity)
-            {
-                dir.y = Mathf.Min(dir.y, 9.81f);
+            // Prevent player from using jet to climb
+            if (vel.y > maxVelAirY)
+            {                
+                dir.y = Mathf.Min(dir.y, -Physics2D.gravity.y * 0.75f);
             }
 
-            // If falling offset the force of gravity
-            if (vel.y < maxAirborneVerticalVelocity)
+            // Allow Player to use jet to slow fall rapidly
+            if (vel.y < maxVelAirY)
             {
                 float velComponentY = Vector2.Dot(Vector2.down, vel.normalized);
-                // Debug.Log("Dot product of vector = " + velComponentY);
-                dir.y += 9.81f * velComponentY;
+                dir.y += -Physics2D.gravity.y * velComponentY;
             }
+            
+            rbody.AddForce(dir);            
+            rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxVelAirX);
+
         }
-
-        rbody.AddForce(dir);
-        rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxSpeed);
-
-        // Debug.Log("dir: " + dir + ", Vel: " + rbody.velocity + ", mag: " + rbody.velocity.magnitude);
+        else // On ground
+        {           
+            rbody.AddForce(dir);
+            rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxSpeed);
+        }
 
         ReduceFuel(FuelDecayAmount * decayMultiplier);
     }

@@ -10748,14 +10748,14 @@ MonoBehaviour:
   _flameJet: {fileID: 2986287513102310554}
   _currentCheckPoint: {fileID: 0}
   _fireBallShooter: {fileID: 1247706581}
-  normalAcceleration: 10
-  normalMaxSpeed: 8
-  normalMaxAirborneSpeed: 12
-  normalMaxAirborneClimbVelocity: 0.1
+  acceleration: 10
+  maxSpeed: 8
+  maxVelocityAirX: 12
+  maxVelocityAirY: -0.1
   chemicalAcceleration: 20
   chemicalMaxSpeed: 12
-  chemicalMaxAirborneSpeed: 15
-  chemicalMaxAirborneClimbVelocity: 4
+  chemicalMaxVelocityAirX: 15
+  chemicalMaxVelocityAirY: 6
   maxFuel: 1000
   fuel: 1000
   FuelDecayAmount: 0.25
