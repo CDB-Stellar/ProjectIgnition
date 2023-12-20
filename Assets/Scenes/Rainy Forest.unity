@@ -71988,14 +71988,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6155896712697979622, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
-      propertyPath: cam
-      value: 
-      objectReference: {fileID: 589086748}
-    - target: {fileID: 6155896712697979622, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
-      propertyPath: FuelDecayAmount
-      value: 0.25
-      objectReference: {fileID: 0}
     - target: {fileID: 6155896712697979641, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
       propertyPath: m_Name
       value: Player
