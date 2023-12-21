@@ -5,6 +5,7 @@ public class FireBall : MonoBehaviour
     private Rigidbody2D _rbody;
     private Animator _anim;
 
+    [SerializeField] PlayerEvents _playerEvents;
     [SerializeField] private GameObject _explosion;
     [SerializeField] private GameObject _steam;
     [SerializeField] private AnimationCurve _growthCurve;
@@ -22,12 +23,26 @@ public class FireBall : MonoBehaviour
         _rbody = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
     }
-    private void FixedUpdate()
+    private void OnEnable()
+    {
+        _playerEvents.onPlayerDeath += DestroySelf;
+    }
+
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerDeath -= DestroySelf;
+    }
+
+    private void Update()
     {
         if (_size <= 0)
+        {
             Destroy(gameObject);
+        }
         if (_isLaunched)
+        {
             Decay();
+        }
     }
     public float GetSize()
     {
@@ -64,21 +79,28 @@ public class FireBall : MonoBehaviour
     {
         if (_decayTimer > _decayRate)
         {
-            _anim.SetFloat("fireballSize", _anim.GetFloat("fireballSize") - _decayAmount);
-            _size -= _decayAmount;
+            _size -= _decayRate * Time.deltaTime;
+            _anim.SetFloat("fireballSize", _size);            
             _decayTimer = 0.0f;
         }
         _decayTimer += Time.deltaTime;
     }
-    private void Explode()
+    public void Explode()
     {
         GameEvents.current.ApplyForceToPlayer(transform.position, _size);
         Instantiate(_explosion, transform.position, _explosion.transform.localRotation);
+        DestroySelf();
     }
 
     public void Extinguish()
     {
         Instantiate(_steam, transform.position, _steam.transform.localRotation);
+        DestroySelf();
+    }
+
+    private void DestroySelf()
+    {
+        Destroy(gameObject);
     }
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -86,9 +108,7 @@ public class FireBall : MonoBehaviour
         if (_isLaunched)
         {
             Explode();
-            Destroy(gameObject);
         }
-
     }
 
 }

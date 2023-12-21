@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 7315562525187755783}
   - component: {fileID: 1312478406}
   - component: {fileID: 8457995171743740103}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: EarthEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -158,12 +158,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4aa8c4e095b251b4798f629cba230a81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 0.7
-  speed: 2
-  detectionRadius: 8
-  distanceThreshold: 7
-  throwCooldown: 2
-  launchSpeed: 1
+  playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
   playerLayer:
     serializedVersion: 2
     m_Bits: 256
@@ -171,6 +166,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 4096
   earthChunk: {fileID: 472784770753932241, guid: 8ac2f98fc8e152e468c8b3200b8d2de5, type: 3}
+  _deathEffect: {fileID: 1152938076162143190, guid: 74d5946a4ad5c904897c63e2e24f016a, type: 3}
+  health: 0.1
+  speed: 2
+  _moveRight: 0
+  fleeRadius: 4
+  detectionRadius: 10
+  throwCooldown: 2
+  launchSpeed: 1
 --- !u!114 &8457995171743740103
 MonoBehaviour:
   m_ObjectHideFlags: 0

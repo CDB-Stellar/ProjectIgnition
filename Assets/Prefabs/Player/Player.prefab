@@ -83,7 +83,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1214969038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10745,6 +10745,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6d9165190ae9334aa779bbd0b31a9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
   _flameJet: {fileID: 2986287513102310554}
   _currentCheckPoint: {fileID: 0}
   _fireBallShooter: {fileID: 1247706581}
@@ -10782,6 +10783,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentLevel: 1
   respawnUI: {fileID: 1214969036}
+  _playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
 --- !u!114 &1674265717073340138
 MonoBehaviour:
   m_ObjectHideFlags: 0

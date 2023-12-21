@@ -1,9 +1,14 @@
-﻿using System.Collections;
+﻿using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class EarthChunk : MonoBehaviour
 {
+    [SerializeField] private PlayerEvents _playerEvents;
+    [SerializeField] private LayerMask _collideLayer;
+    [SerializeField] private GameObject _deathEffect;
+
     public Vector3 dir;
     public float speed;
 
@@ -16,8 +21,18 @@ public class EarthChunk : MonoBehaviour
         Launch();
     }
 
+    private void OnEnable()
+    {
+        _playerEvents.onPlayerDeath += DestroySelf;
+    }
+
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerDeath -= DestroySelf;
+    }
+
     public void Initalize(Vector3 dir, float speed)
-    {       
+    {
         this.dir = dir;
         this.speed = speed;
     }
@@ -26,18 +41,32 @@ public class EarthChunk : MonoBehaviour
         transform.parent = null;
         rbody.velocity = dir * speed;
     }
+
+    private void Collide()
+    {
+        Instantiate(_deathEffect, transform.position, Quaternion.identity);
+        DestroySelf();
+    }
+
+    private void DestroySelf()
+    {
+        Destroy(gameObject);
+    }
+
     private void OnTriggerEnter2D(Collider2D other)
     {
-        if (other.CompareTag("Player") || other.gameObject.layer == LayerMask.GetMask("Ground") || other.CompareTag("PlayerProjectile"))
+        FireBall fireBall;
+        if (other.TryGetComponent(out fireBall))
         {
-            Debug.Log(other.name);
-            Debug.Log("Dirt Clump Destroyed");
-            Destroy(gameObject);
+            fireBall.Explode();
         }
-        else
+
+        if (other.gameObject.GetComponent<EarthSpirit>() == null)
         {
-            ;
+            Debug.Log("Being Destroyed by " + other.gameObject.name);
+            Collide();
         }
+
     }
 }
 

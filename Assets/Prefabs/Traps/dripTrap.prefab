@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2694561281753202574}
   - component: {fileID: 2694561281753202575}
   m_Layer: 0
-  m_Name: DripTrap
+  m_Name: dripTrap
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -118,7 +118,7 @@ GameObject:
   - component: {fileID: 2694561281893294654}
   - component: {fileID: 2694561281893294655}
   - component: {fileID: 2694561281893294624}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: drip
   m_TagString: Traps
   m_Icon: {fileID: 0}

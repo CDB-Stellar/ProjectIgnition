@@ -9,6 +9,7 @@ public class PlayerLoader : MonoBehaviour
     // Public Variables
     public int currentLevel = 1; //level 1 by default
     public GameObject respawnUI;
+    [SerializeField] private PlayerEvents _playerEvents;
 
     // Private Variables
     private int unlockedLevel = 1; //level 1 unlocked by default
@@ -32,9 +33,9 @@ public class PlayerLoader : MonoBehaviour
         HideUI();
 
         // Game Event
-        GameEvents.current.onPlayerRespawn += HideUI; // Subscribe HideUI Function to PlayerRespawnEvent 
-        GameEvents.current.onPlayerDeath += ShowUI; // Subscribe Show UI Function to PlayerDeathEvent
-        GameEvents.current.onPlayerLoadMenu += LoadMainMenu; // Subscribe LoadMainMenu Function to PlayerLoadMenu
+        _playerEvents.onPlayerRespawn += HideUI; // Subscribe HideUI Function to PlayerRespawnEvent 
+        _playerEvents.onPlayerDeath += ShowUI; // Subscribe Show UI Function to PlayerDeathEvent
+        _playerEvents.onPlayerLoadMenu += LoadMainMenu; // Subscribe LoadMainMenu Function to PlayerLoadMenu
     }
     private void HideUI()
     {
@@ -46,11 +47,11 @@ public class PlayerLoader : MonoBehaviour
     }
     public void Respawn()
     {
-        GameEvents.current.PlayerRespawn();
+        _playerEvents.PlayerRespawn();
     }
     public void LoadMenu()
     {
-        GameEvents.current.PlayerLoadMenu();
+        _playerEvents.PlayerLoadMenu();
     }
     public void SavePlayer()
     {

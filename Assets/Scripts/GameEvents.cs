@@ -13,46 +13,11 @@ public class GameEvents : MonoBehaviour
     }
 
     // FireBall Events
-    public Action<float> onGrowFireball;
-    public Action<Vector3> onLaunchFireBall;
-    public Action onFireBallCompleteGrowth;
     public Action<Vector3, float> onApplyForceToPlayer;
-
-    //Player Events
-    public Action onPlayerDeath;
-    public Action onPlayerRespawn;
-    public Action onPlayerLoadMenu;
-
-
-    //Fireball Event Methods ---------------------------------------------------------------------------------------------------------------------------------
-    public void GrowFireball(float growthAmount)
-    {
-        onGrowFireball?.Invoke(growthAmount);
-    }
-    public void LaunchFireBall(Vector3 dir)
-    {
-        onLaunchFireBall?.Invoke(dir); // Same as a if(onFireball != null) { onApplyForceOnPlayer(); }        
-    }
-    public void FireBallCompleteGrowth()
-    {
-        onFireBallCompleteGrowth?.Invoke();
-    }
+       
+    // Fireball Event Methods ---------------------------------------------------------------------------------------------------------------------------------
     public void ApplyForceToPlayer(Vector3 fireBallPos, float strength)
     {
         onApplyForceToPlayer?.Invoke(fireBallPos, strength);
-    }
-    
-    //PlayerEvents -------------------------------------------------------------------------------------------------------------------------------------------
-    public void PlayerDeath()
-    {
-        onPlayerDeath?.Invoke();
-    }
-    public void PlayerRespawn()
-    {
-        onPlayerRespawn?.Invoke();
-    }
-    public void PlayerLoadMenu()
-    {
-        onPlayerLoadMenu?.Invoke();
     }
 }

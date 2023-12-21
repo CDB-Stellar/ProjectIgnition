@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8001954141100040918}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: DeathEffectPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,7 +45,7 @@ GameObject:
   - component: {fileID: 6856986112722528805}
   - component: {fileID: 1810559367916233865}
   - component: {fileID: 6921326403463181003}
-  m_Layer: 0
+  m_Layer: 13
   m_Name: WaterEnemy
   m_TagString: Enemy
   m_Icon: {fileID: 0}
@@ -194,3 +194,4 @@ MonoBehaviour:
   MoveRight: 0
   _deathEffect: {fileID: 3988182056853309966, guid: 96c3b687b9741824698cf68fab5110b5, type: 3}
   _deathEffectPosition: {fileID: 8001954141100040918}
+  _playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
