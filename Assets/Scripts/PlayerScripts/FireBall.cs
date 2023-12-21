@@ -6,6 +6,7 @@ public class FireBall : MonoBehaviour
     private Animator _anim;
 
     [SerializeField] private GameObject _explosion;
+    [SerializeField] private GameObject _steam;
     [SerializeField] private AnimationCurve _growthCurve;
 
     [SerializeField] private float _decayRate;
@@ -28,7 +29,7 @@ public class FireBall : MonoBehaviour
         if (_isLaunched)
             Decay();
     }
-    public float GetDamage()
+    public float GetSize()
     {
         return _size;
     }
@@ -72,13 +73,19 @@ public class FireBall : MonoBehaviour
     private void Explode()
     {
         GameEvents.current.ApplyForceToPlayer(transform.position, _size);
+        Instantiate(_explosion, transform.position, _explosion.transform.localRotation);
     }
+
+    public void Extinguish()
+    {
+        Instantiate(_steam, transform.position, _steam.transform.localRotation);
+    }
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (_isLaunched)
         {
             Explode();
-            Instantiate(_explosion, transform.position, _explosion.transform.localRotation);
             Destroy(gameObject);
         }
 

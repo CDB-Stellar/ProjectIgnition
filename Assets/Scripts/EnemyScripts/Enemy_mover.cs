@@ -9,6 +9,9 @@ public class Enemy_mover : MonoBehaviour, IResettable
 	public float speed;
 	public bool MoveRight;
 
+    [SerializeField] private GameObject _deathEffect;
+    [SerializeField] private Transform _deathEffectPosition;
+
     private Vector3 startPos;
 
     private void Start()
@@ -37,6 +40,7 @@ public class Enemy_mover : MonoBehaviour, IResettable
 
     public void DisableSelf()
     {
+        Instantiate(_deathEffect, _deathEffectPosition.position, Quaternion.identity);
         gameObject.SetActive(false);
     }
     private void OnTriggerEnter2D(Collider2D other)
@@ -47,10 +51,17 @@ public class Enemy_mover : MonoBehaviour, IResettable
 		}
         if (other.gameObject.CompareTag("PlayerProjectile"))
         {
-            float damage = other.GetComponent<FireBall>().GetDamage();
-            if (damage > health)            
+            FireBall fireBall = other.gameObject.GetComponent<FireBall>();
+
+            float damage = fireBall.GetSize();
+            if (damage > health)
+            {
                 DisableSelf();
-            
+            }
+            else 
+            {
+                fireBall.Extinguish();
+            }
         }
 	}
 

@@ -124,7 +124,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
     {
         if (other.gameObject.CompareTag("PlayerProjectile"))
         {
-            float damage = other.GetComponent<FireBall>().GetDamage();
+            float damage = other.GetComponent<FireBall>().GetSize();
             if (damage > health)
                 DisableSelf();
 
