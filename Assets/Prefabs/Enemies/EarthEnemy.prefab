@@ -172,8 +172,8 @@ MonoBehaviour:
   _moveRight: 0
   fleeRadius: 4
   detectionRadius: 10
-  throwCooldown: 2
-  launchSpeed: 1
+  throwCooldown: 1.2
+  launchSpeed: 9
 --- !u!114 &8457995171743740103
 MonoBehaviour:
   m_ObjectHideFlags: 0

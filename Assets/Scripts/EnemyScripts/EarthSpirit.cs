@@ -27,7 +27,9 @@ public class EarthSpirit : MonoBehaviour, IResettable
     private Vector3 playerPos;
     private Animator anim;
     private AudioManger audioManger;
-    private bool _playerInRange, _blockedByWall, canShoot = true;
+    private bool _playerInRange;
+    private bool _blockedByWall;
+    private bool _canShoot = true;
 
 
     private float throwCooldownTimer;
@@ -61,7 +63,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
         _playerInRange = PlayerInRange();
         _blockedByWall = WallInWay(Direction);
 
-        //Debug.Log(_state.ToString());
+        Debug.Log(_state.ToString());
         switch (_state)
         {
             case EarthSpiritStates.Patrol:
@@ -80,13 +82,13 @@ public class EarthSpirit : MonoBehaviour, IResettable
 
     private void Patrol()
     {
-
         // Player comes into View Range
         if (_playerInRange)
         {
             FacePlayer();
             anim.SetBool("isMoving", false);
             _state = EarthSpiritStates.Attack;
+            _canShoot = true;
             return;
         }        
 
@@ -107,6 +109,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
             FacePlayer();
             _state = EarthSpiritStates.Attack;
             anim.SetBool("isMoving", false);
+            _canShoot = true;
             return;
         }
         // Spirit Gets Cornered       
@@ -115,6 +118,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
             FacePlayer();
             _state = EarthSpiritStates.Attack;
             anim.SetBool("isMoving", false);
+            _canShoot = true;
             return;
         }
 
@@ -140,20 +144,21 @@ public class EarthSpirit : MonoBehaviour, IResettable
         {
             _state = EarthSpiritStates.Patrol;
             anim.SetBool("isMoving", true);
+            _canShoot = false;
             return;
 
         }
-
         // Player Comes into Flee Range and is not cornered
         else if (DistanceToPlayer() < fleeRadius && !WallInWay(-Direction))
         {
             _state = EarthSpiritStates.Flee;
             anim.SetBool("isMoving", true);
+            _canShoot = false;
             return;
         }
-
-        //Attack
-        if (canShoot && throwCooldownTimer < 0f)
+        
+        // Attack
+        if (_canShoot && throwCooldownTimer < 0f)
         {
             LaunchDirt();
         }
@@ -191,6 +196,8 @@ public class EarthSpirit : MonoBehaviour, IResettable
 
     private void LaunchDirt()
     {
+        Debug.Log("THROWING");
+
         anim.SetTrigger("throw");
         anim.SetBool("isMoving", false);
         audioManger.Play("throw");
@@ -198,7 +205,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
         throwCooldownTimer = throwCooldown;
         Instantiate(earthChunk, transform.position, transform.rotation, transform)
             .GetComponent<EarthChunk>()
-            .Initalize(playerPos - transform.position, launchSpeed);
+            .Initalize((playerPos - transform.position).normalized, launchSpeed);
     }
     private bool WallInWay(float direction)
     {
@@ -216,7 +223,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
     }
     private void StopShooting()
     {
-        canShoot = false;
+        _canShoot = false;
     }
     private bool PlayerInRange()
     {
@@ -243,7 +250,7 @@ public class EarthSpirit : MonoBehaviour, IResettable
     {
         transform.position = startPos;
         gameObject.SetActive(true);
-        canShoot = false;
+        _canShoot = false;
         _playerInRange = false;
     }
     private void OnTriggerEnter2D(Collider2D other)

@@ -7,7 +7,8 @@ public class EarthChunk : MonoBehaviour
 {
     [SerializeField] private PlayerEvents _playerEvents;
     [SerializeField] private LayerMask _collideLayer;
-    [SerializeField] private GameObject _deathEffect;
+    [SerializeField] private GameObject _combustEffect;
+    [SerializeField] private GameObject _collideEffect;
 
     public Vector3 dir;
     public float speed;
@@ -44,7 +45,13 @@ public class EarthChunk : MonoBehaviour
 
     private void Collide()
     {
-        Instantiate(_deathEffect, transform.position, Quaternion.identity);
+        Instantiate(_collideEffect, transform.position, Quaternion.identity);
+        DestroySelf();
+    }
+
+    private void Combust()
+    {
+        Instantiate(_combustEffect, transform.position, Quaternion.identity);
         DestroySelf();
     }
 
@@ -59,14 +66,14 @@ public class EarthChunk : MonoBehaviour
         if (other.TryGetComponent(out fireBall))
         {
             fireBall.Explode();
+            Combust();
         }
 
-        if (other.gameObject.GetComponent<EarthSpirit>() == null)
+        else if (other.gameObject.GetComponent<EarthSpirit>() == null)
         {
             Debug.Log("Being Destroyed by " + other.gameObject.name);
             Collide();
         }
-
     }
 }
 

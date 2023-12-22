@@ -140,6 +140,7 @@ MonoBehaviour:
   _collideLayer:
     serializedVersion: 2
     m_Bits: 3072
-  _deathEffect: {fileID: 1152938076162143190, guid: be2e6315b544bd54cbd19bed9289dba2, type: 3}
+  _combustEffect: {fileID: 1152938076162143190, guid: be2e6315b544bd54cbd19bed9289dba2, type: 3}
+  _collideEffect: {fileID: 4021699944310452558, guid: 1701be75eec5a324080d4b84c2b4eda8, type: 3}
   dir: {x: 0, y: 0, z: 0}
   speed: 0

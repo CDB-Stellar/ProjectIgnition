@@ -1058,18 +1058,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1214969039, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
-      propertyPath: m_PresetInfoIsWorld
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1674265717073340138, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
-      propertyPath: sounds.Array.data[0].clip
-      value: 
-      objectReference: {fileID: 8300000, guid: 6e0d244b109d126459ca371f5e99402e, type: 3}
-    - target: {fileID: 1674265717073340138, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
-      propertyPath: sounds.Array.data[0].pitch
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6155896712697979621, guid: 13a68f55d646e7043abf8df7a16b03a1, type: 3}
       propertyPath: m_RootOrder
       value: 5
