@@ -10,6 +10,7 @@ public class FireBall : MonoBehaviour
     [SerializeField] private GameObject _steam;
     [SerializeField] private AnimationCurve _growthCurve;
 
+    [SerializeField] private float _maxPlayerLaunchForce;
     [SerializeField] private float _decayRate;
     [SerializeField] private float _decayAmount;
     
@@ -87,7 +88,7 @@ public class FireBall : MonoBehaviour
     }
     public void Explode()
     {
-        GameEvents.current.ApplyForceToPlayer(transform.position, _size);
+        GameEvents.current.ApplyForceToPlayer(transform.position, _size * _maxPlayerLaunchForce);
         Instantiate(_explosion, transform.position, _explosion.transform.localRotation);
         DestroySelf();
     }

@@ -63,7 +63,6 @@ public class EarthSpirit : MonoBehaviour, IResettable
         _playerInRange = PlayerInRange();
         _blockedByWall = WallInWay(Direction);
 
-        Debug.Log(_state.ToString());
         switch (_state)
         {
             case EarthSpiritStates.Patrol:

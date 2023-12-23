@@ -30,8 +30,6 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float FuelDecayAmount; // the amount of fuel that get depleted
 
-    [SerializeField] private float launchForceFactor;
-
     [SerializeField] private float layerDetectionRadius;
     [SerializeField] private LayerMask ground;
 
@@ -274,25 +272,36 @@ public class PlayerController : MonoBehaviour, IResettable
             if (vel.y < maxVelAirY)
             {
                 float velComponentY = Vector2.Dot(Vector2.down, vel.normalized);
-                dir.y += -Physics2D.gravity.y * velComponentY;
+                dir.y += -Physics2D.gravity.y * velComponentY * velComponentY;
             }
-            
+
+            dir.x = dir.x * (1 - Mathf.Abs(vel.x) / maxVelAirX);
+
+            Debug.Log("Airborne force: " + dir);
+
             rbody.AddForce(dir);            
-            rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxVelAirX);
+            //rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxVelAirX);
 
         }
         else // On ground
-        {           
+        {
+            // Offset Drag Caused by Gravity           
+            float dirYComponent = 1 - Vector2.Dot(Vector2.up, dir.normalized);
+            float gravityOffset = -Physics2D.gravity.y * dirYComponent * dirYComponent;
+
+            dir.x = dir.x * (1 - (Mathf.Abs(vel.x) / maxSpeed ));
+            dir.y += gravityOffset;
+
             rbody.AddForce(dir);
-            rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxSpeed);
         }
 
         ReduceFuel(FuelDecayAmount * decayMultiplier);
     }
-    private void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
+    private void LaunchPlayer(Vector3 entityPosition, float launchForce)
     {
         Vector3 direction = entityPosition - transform.position;
-        rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
+        // -v * launchForce / max((|dir|^2, 2)
+        rbody.AddForce(-direction * launchForce / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
     }
 
     // COLLISIONS---------------------------------------------------------------------------------------------------------------------------------------------
