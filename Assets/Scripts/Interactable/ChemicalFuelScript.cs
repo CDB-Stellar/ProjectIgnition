@@ -5,10 +5,11 @@ using Assets.Scripts;
 
 public class ChemicalFuelScript : MonoBehaviour, IResettable
 {
+    [SerializeField] PlayerEvents _playerEvents;
     public float combustionTime;
     void Start()
     {
-        GameEvents.current.onPlayerRespawn += ResetSelf;
+       _playerEvents.onPlayerRespawn += ResetSelf;
     }
     public void DisableSelf()
     {

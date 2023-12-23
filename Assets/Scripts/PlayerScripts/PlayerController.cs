@@ -5,6 +5,7 @@ public class PlayerController : MonoBehaviour, IResettable
 {
     //public Varibles
     [Header("Object References")]
+    [SerializeField] private PlayerEvents _playerEvents;
     [SerializeField] private Transform _flameJet;
     [SerializeField] private CheckPoint _currentCheckPoint;
     [SerializeField] private FireBallShooter _fireBallShooter;
@@ -74,8 +75,8 @@ public class PlayerController : MonoBehaviour, IResettable
 
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
 
-        GameEvents.current.onPlayerDeath += DisableSelf;
-        GameEvents.current.onPlayerRespawn += ResetSelf;
+        _playerEvents.onPlayerDeath += DisableSelf;
+        _playerEvents.onPlayerRespawn += ResetSelf;
 
         audioManger = GetComponent<AudioManger>();
     }
@@ -115,9 +116,6 @@ public class PlayerController : MonoBehaviour, IResettable
                 }
             }
 
-            //Debug.Log("mag: " + rbody.velocity.magnitude);
-
-
             if (_remainingCombustionTime > 0.0f)
             {
                 _remainingCombustionTime -= Time.deltaTime;
@@ -149,6 +147,12 @@ public class PlayerController : MonoBehaviour, IResettable
             _fireBallShooter.LaunchFireball(GetVectorFromMousePos());
         }
     }
+
+    public void Die()
+    {
+        ResetSelf();
+    }
+
     public void ResetSelf()
     {
         //Reset Player for Respawn
@@ -180,7 +184,7 @@ public class PlayerController : MonoBehaviour, IResettable
     private void ReduceFuel(float amount)
     {
         if (fuel < 0.0f)
-            GameEvents.current.PlayerDeath();
+            _playerEvents.PlayerDeath();
         else
             fuel -= amount;
     }
@@ -288,7 +292,6 @@ public class PlayerController : MonoBehaviour, IResettable
     private void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
     {
         Vector3 direction = entityPosition - transform.position;
-        //Debug.Log("Explosion from: " + direction + "With Distance of: " + direction.magnitude + "With Strength of: " + (fuel * launchForceFactor) / Mathf.Pow(direction.magnitude, 2f));    
         rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
     }
 
@@ -297,7 +300,7 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         // Sees if player collided with something that will kill you
         if (other.CompareTag("Traps") || other.CompareTag("Enemy"))
-            GameEvents.current.PlayerDeath();
+            _playerEvents.PlayerDeath();
 
         // Sees if the player collided with fuel
         if (other.CompareTag("Fuel"))

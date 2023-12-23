@@ -13,8 +13,8 @@ GameObject:
   - component: {fileID: 4629623383372898462}
   - component: {fileID: 4594518243916400408}
   - component: {fileID: 6667878597191286434}
-  m_Layer: 0
-  m_Name: dirtClump
+  m_Layer: 11
+  m_Name: DirtClump
   m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 16.754, y: -0.355, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -45,6 +46,7 @@ SpriteRenderer:
   m_CastShadows: 0
   m_ReceiveShadows: 0
   m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
   m_MotionVectors: 1
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
@@ -134,5 +136,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5cde7e32405a09c4c8006d3e67eee0ec, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
+  _collideLayer:
+    serializedVersion: 2
+    m_Bits: 3072
+  _combustEffect: {fileID: 1152938076162143190, guid: be2e6315b544bd54cbd19bed9289dba2, type: 3}
+  _collideEffect: {fileID: 4021699944310452558, guid: 1701be75eec5a324080d4b84c2b4eda8, type: 3}
   dir: {x: 0, y: 0, z: 0}
   speed: 0

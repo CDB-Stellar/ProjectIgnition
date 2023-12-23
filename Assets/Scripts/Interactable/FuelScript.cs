@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class FuelScript : MonoBehaviour, IResettable
 {
+    [SerializeField] PlayerEvents _playerEvents;
+
     [Header("Fuel Sprites")]
     [SerializeField] private List<Sprite> sprites;
     [SerializeField] private int index;
@@ -15,7 +17,7 @@ public class FuelScript : MonoBehaviour, IResettable
     [Range(0f,1f)]public float maxIncrease; //Range from 0 - 1 to make balancing easier
     void Start()
     {
-        GameEvents.current.onPlayerRespawn += ResetSelf;
+        _playerEvents.onPlayerRespawn += ResetSelf;
 
         GetComponent<SpriteRenderer>().sprite = sprites[index];
 

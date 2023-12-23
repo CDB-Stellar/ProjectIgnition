@@ -5,6 +5,7 @@ using Assets.Scripts;
 
 public class LotusLeaf : MonoBehaviour, IResettable
 {
+    [SerializeField] PlayerEvents _playerEvents;
     private ParticleController leftFire, centreFire, rightFire;
     private Animator anim;
     private Collider2D collider2D;
@@ -18,7 +19,7 @@ public class LotusLeaf : MonoBehaviour, IResettable
 
         collider2D = GetComponent<BoxCollider2D>();
 
-        GameEvents.current.onPlayerRespawn += ResetSelf;
+        _playerEvents.onPlayerRespawn += ResetSelf;
 
     }
     public void DisableSelf()

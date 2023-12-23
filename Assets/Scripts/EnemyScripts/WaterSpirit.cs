@@ -3,18 +3,22 @@ using System.Collections.Generic;
 using UnityEngine;
 using Assets.Scripts;
 
-public class Enemy_mover : MonoBehaviour, IResettable
+public class WaterSpirit : MonoBehaviour, IResettable
 {
     public float health;
 	public float speed;
 	public bool MoveRight;
+
+    [SerializeField] private GameObject _deathEffect;
+    [SerializeField] private Transform _deathEffectPosition;
+    [SerializeField] private PlayerEvents _playerEvents;
 
     private Vector3 startPos;
 
     private void Start()
     {
         startPos = transform.position;
-        GameEvents.current.onPlayerRespawn += ResetSelf;
+        _playerEvents.onPlayerRespawn += ResetSelf;
     }    
     private void Update()
 	{		
@@ -37,20 +41,28 @@ public class Enemy_mover : MonoBehaviour, IResettable
 
     public void DisableSelf()
     {
+        Instantiate(_deathEffect, _deathEffectPosition.position, Quaternion.identity);
         gameObject.SetActive(false);
     }
     private void OnTriggerEnter2D(Collider2D other)
 	{
-		if (other.gameObject.CompareTag("turn"))
+        if (other.gameObject.CompareTag("turn"))
 		{
             MoveRight = !MoveRight;
 		}
         if (other.gameObject.CompareTag("PlayerProjectile"))
         {
-            float damage = other.GetComponent<FireBall>().GetDamage();
-            if (damage > health)            
+            FireBall fireBall = other.gameObject.GetComponent<FireBall>();
+
+            float damage = fireBall.GetSize();
+            if (damage > health)
+            {
                 DisableSelf();
-            
+            }
+            else 
+            {
+                fireBall.Extinguish();
+            }
         }
 	}
 

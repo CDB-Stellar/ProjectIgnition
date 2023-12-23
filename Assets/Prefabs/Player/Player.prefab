@@ -83,7 +83,7 @@ MonoBehaviour:
   m_FallbackScreenDPI: 96
   m_DefaultSpriteDPI: 96
   m_DynamicPixelsPerUnit: 1
-  m_PresetInfoIsWorld: 0
+  m_PresetInfoIsWorld: 1
 --- !u!114 &1214969038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10745,13 +10745,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f6d9165190ae9334aa779bbd0b31a9ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
   _flameJet: {fileID: 2986287513102310554}
   _currentCheckPoint: {fileID: 0}
   _fireBallShooter: {fileID: 1247706581}
   acceleration: 10
   maxSpeed: 8
   maxVelocityAirX: 12
-  maxVelocityAirY: -0.1
+  maxVelocityAirY: -0.5
   chemicalAcceleration: 20
   chemicalMaxSpeed: 12
   chemicalMaxVelocityAirX: 15
@@ -10782,6 +10783,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   currentLevel: 1
   respawnUI: {fileID: 1214969036}
+  _playerEvents: {fileID: 11400000, guid: cef7f104086b79c4aa5a4d93af4f6bf0, type: 2}
 --- !u!114 &1674265717073340138
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10813,7 +10815,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _fireballPrefab: {fileID: 3912580137686441790, guid: f924ae8ec477cdf4aa0906aded73aea8, type: 3}
-  _fireballFireRate: 0.1
+  _fireballFireRate: 0.25
   _fireballLaunchSpeed: 10
   _fireballGrowthAmount: 0.05
   _fireballGrowthRate: 0.2
