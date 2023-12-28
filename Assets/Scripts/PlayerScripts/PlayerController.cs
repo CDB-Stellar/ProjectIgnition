@@ -282,10 +282,10 @@ public class PlayerController : MonoBehaviour, IResettable
             else if (vel.y < maxVelAirY)
             {
                 float velComponentY = dir.y;
-                float strength = Mathf.Pow(Mathf.Abs(vel.y) - maxVelAirY, 1.2f);
+                float gravityOffset = -Physics2D.gravity.y * velComponentY * velComponentY;
+                float breakingPower = Mathf.Pow(Mathf.Abs(vel.y) - maxVelAirY, 1.2f);
 
-                dir.y = -Physics2D.gravity.y * velComponentY * velComponentY + strength;
-
+                dir.y = gravityOffset + breakingPower;
             }
 
             float velDotDir = Vector2.Dot(vel.normalized, dir);
