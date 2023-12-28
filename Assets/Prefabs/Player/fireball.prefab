@@ -160,7 +160,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
-  _maxPlayerLaunchForce: 200
+  _maxPlayerLaunchForce: 6
   _decayRate: 0.1
   _decayAmount: 0.01
 --- !u!95 &1416581672347443942

@@ -54,7 +54,7 @@ public class PlayerController : MonoBehaviour, IResettable
 
     private float _remainingCombustionTime;
 
-    
+
 
     //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
@@ -264,22 +264,30 @@ public class PlayerController : MonoBehaviour, IResettable
         {
             // Prevent player from using jet to climb
             if (vel.y > maxVelAirY)
-            {                
+            {
                 dir.y = Mathf.Min(dir.y, -Physics2D.gravity.y * 0.75f);
             }
-
             // Allow Player to use jet to slow fall rapidly
-            if (vel.y < maxVelAirY)
+            else if (vel.y < maxVelAirY)
             {
                 float velComponentY = Vector2.Dot(Vector2.down, vel.normalized);
                 dir.y += -Physics2D.gravity.y * velComponentY * velComponentY;
             }
 
-            dir.x = dir.x * (1 - Mathf.Abs(vel.x) / maxVelAirX);
+
+            float velDotDir = Vector2.Dot(vel.normalized, dir.normalized);
+
+            // If accelerating in the direction of the velocity
+            if (velDotDir > 0)
+            {
+                // The faster player is moving the less acceleration force it applied from the jet
+                float percentMaxSpeed = (1 - Mathf.Min(Mathf.Abs(vel.x), maxVelAirX) / maxVelAirX);
+                dir.x = dir.x * percentMaxSpeed;
+            }
 
             Debug.Log("Airborne force: " + dir);
 
-            rbody.AddForce(dir);            
+            rbody.AddForce(dir);
             //rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxVelAirX);
 
         }
@@ -289,7 +297,7 @@ public class PlayerController : MonoBehaviour, IResettable
             float dirYComponent = 1 - Vector2.Dot(Vector2.up, dir.normalized);
             float gravityOffset = -Physics2D.gravity.y * dirYComponent * dirYComponent;
 
-            dir.x = dir.x * (1 - (Mathf.Abs(vel.x) / maxSpeed ));
+            dir.x = dir.x * (1 - (Mathf.Min(Mathf.Abs(vel.x), maxSpeed) / maxSpeed));
             dir.y += gravityOffset;
 
             rbody.AddForce(dir);
@@ -301,7 +309,7 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         Vector3 direction = entityPosition - transform.position;
         // -v * launchForce / max((|dir|^2, 2)
-        rbody.AddForce(-direction * launchForce / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
+        rbody.AddForce(-direction * launchForce / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f), ForceMode2D.Impulse);
     }
 
     // COLLISIONS---------------------------------------------------------------------------------------------------------------------------------------------
