@@ -223,7 +223,8 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private bool IsTouchingLayer(LayerMask layerMask)
     {
-        return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
+        return Physics2D.Raycast(transform.position, Vector2.down, layerDetectionRadius, layerMask);
+         //Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
     }
     private Vector2 GetVectorFromMousePos()
     {
@@ -256,7 +257,7 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private void ApplyFlameJet(float acceleration, float maxSpeed, float maxVelAirX, float maxVelAirY, float decayMultiplier)
     {
-        Vector2 dir = -GetVectorFromMousePos() * acceleration;
+        Vector2 dir = -GetVectorFromMousePos();
         Vector2 vel = rbody.velocity;
 
         // In Air
@@ -265,43 +266,44 @@ public class PlayerController : MonoBehaviour, IResettable
             // Prevent player from using jet to climb
             if (vel.y > maxVelAirY)
             {
-                dir.y = Mathf.Min(dir.y, -Physics2D.gravity.y * 0.75f);
+                dir.y = Mathf.Min(dir.y * acceleration, -Physics2D.gravity.y * 0.75f);
             }
             // Allow Player to use jet to slow fall rapidly
             else if (vel.y < maxVelAirY)
             {
                 float velComponentY = Vector2.Dot(Vector2.down, vel.normalized);
-                dir.y += -Physics2D.gravity.y * velComponentY * velComponentY;
-            }
+                dir.y = (-Physics2D.gravity.y * 2) * velComponentY * velComponentY;
+            }            
 
-
-            float velDotDir = Vector2.Dot(vel.normalized, dir.normalized);
+            float velDotDir = Vector2.Dot(vel.normalized, dir);
 
             // If accelerating in the direction of the velocity
             if (velDotDir > 0)
             {
                 // The faster player is moving the less acceleration force it applied from the jet
                 float percentMaxSpeed = (1 - Mathf.Min(Mathf.Abs(vel.x), maxVelAirX) / maxVelAirX);
-                dir.x = dir.x * percentMaxSpeed;
+                dir.x = dir.x * acceleration * percentMaxSpeed;
+            }
+            else
+            {
+                dir.x *= acceleration;
             }
 
-            Debug.Log("Airborne force: " + dir);
-
             rbody.AddForce(dir);
-            //rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxVelAirX);
-
         }
         else // On ground
         {
-            // Offset Drag Caused by Gravity           
-            float dirYComponent = 1 - Vector2.Dot(Vector2.up, dir.normalized);
-            float gravityOffset = -Physics2D.gravity.y * dirYComponent * dirYComponent;
+            // nullify drag caused by gravity pushing playerinto ground by creating a upwards force
+            float horizontalComponent = dir.x;
+            float gravityOffset = -Physics2D.gravity.y * horizontalComponent * horizontalComponent;
 
-            dir.x = dir.x * (1 - (Mathf.Min(Mathf.Abs(vel.x), maxSpeed) / maxSpeed));
-            dir.y += gravityOffset;
+            dir.x = dir.x * acceleration * (1 - (Mathf.Min(Mathf.Abs(vel.x), maxSpeed) / maxSpeed));
+            dir.y = gravityOffset;
+
 
             rbody.AddForce(dir);
         }
+
 
         ReduceFuel(FuelDecayAmount * decayMultiplier);
     }
