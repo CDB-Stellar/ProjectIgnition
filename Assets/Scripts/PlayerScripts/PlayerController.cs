@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float FuelDecayAmount; // the amount of fuel that get depleted
 
+
     [SerializeField] private float layerDetectionRadius;
     [SerializeField] private LayerMask ground;
 
@@ -39,6 +40,7 @@ public class PlayerController : MonoBehaviour, IResettable
 
     [SerializeField] private float jetRotationSpeed = 5f;
     [SerializeField] private Vector3 jetRestPosition;
+    [SerializeField] private AnimationCurve _jetScaleSize;
 
     //private Varibles
     private Rigidbody2D rbody;
@@ -75,6 +77,7 @@ public class PlayerController : MonoBehaviour, IResettable
 
         _playerEvents.onPlayerDeath += DisableSelf;
         _playerEvents.onPlayerRespawn += ResetSelf;
+        _fireBallShooter.OnFireBallCharge += ReduceFuel;
 
         audioManger = GetComponent<AudioManger>();
     }
@@ -140,7 +143,7 @@ public class PlayerController : MonoBehaviour, IResettable
         {
             _fireBallShooter.CreateFireball();
         }
-        else if (!_shootPressed && _fireBallShooter.Charging)
+        else if (!_shootPressed && _fireBallShooter.Charging && _fireBallShooter.HasFireBall)
         {
             _fireBallShooter.LaunchFireball(GetVectorFromMousePos());
         }
@@ -150,13 +153,13 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         ResetSelf();
     }
-
     public void ResetSelf()
     {
         //Reset Player for Respawn
         fuel = maxFuel * _currentCheckPoint.startFuel;
         transform.position = _currentCheckPoint.transform.position;
         SwitchToNormalBurn();
+        _fireBallShooter.Refresh();
 
         _isDead = false;
     }
@@ -224,7 +227,7 @@ public class PlayerController : MonoBehaviour, IResettable
     private bool IsTouchingLayer(LayerMask layerMask)
     {
         return Physics2D.Raycast(transform.position, Vector2.down, layerDetectionRadius, layerMask);
-         //Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
+        //Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
     }
     private Vector2 GetVectorFromMousePos()
     {
@@ -248,7 +251,7 @@ public class PlayerController : MonoBehaviour, IResettable
         _flameJet.transform.rotation = Quaternion.Slerp(_flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
 
         // Scale the Jet to the appropriate size
-        float jetSize = fuel / maxFuel;
+        float jetSize = _jetScaleSize.Evaluate(fuel / maxFuel);
         foreach (Transform transform in _flameJet.GetComponentInChildren<Transform>())
         {
             transform.localScale = new Vector3(jetSize, jetSize, 1f);
@@ -263,17 +266,27 @@ public class PlayerController : MonoBehaviour, IResettable
         // In Air
         if (!_isOnGround)
         {
+            if (dir.y < 0)
+            {
+                if (vel.y < maxVelAirX)
+                {
+                    dir.y *= acceleration;
+                }
+            }
             // Prevent player from using jet to climb
-            if (vel.y > maxVelAirY)
+            else if (vel.y > maxVelAirY)
             {
                 dir.y = Mathf.Min(dir.y * acceleration, -Physics2D.gravity.y * 0.75f);
             }
             // Allow Player to use jet to slow fall rapidly
             else if (vel.y < maxVelAirY)
             {
-                float velComponentY = Vector2.Dot(Vector2.down, vel.normalized);
-                dir.y = (-Physics2D.gravity.y * 2) * velComponentY * velComponentY;
-            }            
+                float velComponentY = dir.y;
+                float strength = Mathf.Pow(Mathf.Abs(vel.y) - maxVelAirY, 1.2f);
+
+                dir.y = -Physics2D.gravity.y * velComponentY * velComponentY + strength;
+
+            }
 
             float velDotDir = Vector2.Dot(vel.normalized, dir);
 
