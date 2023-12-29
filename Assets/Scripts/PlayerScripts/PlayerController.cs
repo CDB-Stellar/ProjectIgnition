@@ -47,6 +47,7 @@ public class PlayerController : MonoBehaviour, IResettable
     private ParticleController normalBodyFlamePSC, chemicalBodyFlamePSC;
     private ParticleController normalJetFlamePSC, chemicalJetFlamePSC;
     private AudioManger audioManger;
+    private Vector3 _spawnPosition;
 
     private bool _shootPressed;
     private bool _movePressed;
@@ -55,8 +56,6 @@ public class PlayerController : MonoBehaviour, IResettable
     private bool _isInChemicalCombustion;
 
     private float _remainingCombustionTime;
-
-
 
     //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
@@ -73,13 +72,15 @@ public class PlayerController : MonoBehaviour, IResettable
         normalJetFlamePSC = transform.GetChild(1).GetChild(0).GetComponent<ParticleController>();
         chemicalJetFlamePSC = transform.GetChild(1).GetChild(1).GetComponent<ParticleController>();
 
+        audioManger = GetComponent<AudioManger>();
+
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
 
         _playerEvents.onPlayerDeath += DisableSelf;
         _playerEvents.onPlayerRespawn += ResetSelf;
         _fireBallShooter.OnFireBallCharge += ReduceFuel;
 
-        audioManger = GetComponent<AudioManger>();
+        _spawnPosition = transform.position;
     }
     private void Update()
     {
@@ -156,8 +157,18 @@ public class PlayerController : MonoBehaviour, IResettable
     public void ResetSelf()
     {
         //Reset Player for Respawn
-        fuel = maxFuel * _currentCheckPoint.startFuel;
-        transform.position = _currentCheckPoint.transform.position;
+
+        if (_currentCheckPoint == null)
+        {
+            transform.position = _spawnPosition;
+            fuel = maxFuel;
+        }
+        else
+        {
+            transform.position = _currentCheckPoint.transform.position;
+            fuel = maxFuel * _currentCheckPoint.startFuel;
+        }
+
         SwitchToNormalBurn();
         _fireBallShooter.Refresh();
 
