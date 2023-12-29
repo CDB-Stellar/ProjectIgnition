@@ -1,14 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Assets.Scripts;
+﻿using UnityEngine;
 
 public class LotusLeaf : MonoBehaviour, IResettable
 {
     [SerializeField] PlayerEvents _playerEvents;
     private ParticleController leftFire, centreFire, rightFire;
     private Animator anim;
-    private Collider2D collider2D;
+    private Collider2D _collider2D;
     public void Start()
     {
         leftFire = transform.GetChild(0).GetComponent<ParticleController>();
@@ -17,7 +14,7 @@ public class LotusLeaf : MonoBehaviour, IResettable
 
         anim = GetComponent<Animator>();
 
-        collider2D = GetComponent<BoxCollider2D>();
+        _collider2D = GetComponent<BoxCollider2D>();
 
         _playerEvents.onPlayerRespawn += ResetSelf;
 
@@ -28,12 +25,12 @@ public class LotusLeaf : MonoBehaviour, IResettable
         centreFire.StopEmission();
         rightFire.StopEmission();
 
-        collider2D.enabled = false;
+        _collider2D.enabled = false;
     }
     public void ResetSelf()
     {
         anim.SetBool("burned", false);
-        collider2D.enabled = true;
+        _collider2D.enabled = true;
     }
     private void StartBurn()
     {

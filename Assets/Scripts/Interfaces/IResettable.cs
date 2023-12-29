@@ -4,11 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Assets.Scripts
+
+public interface IResettable
 {
-    interface IResettable
-    {
-        void ResetSelf();
-        void DisableSelf();        
-    }
+    void ResetSelf();
+    void DisableSelf();        
 }
+
