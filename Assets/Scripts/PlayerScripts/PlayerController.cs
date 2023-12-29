@@ -30,7 +30,6 @@ public class PlayerController : MonoBehaviour, IResettable
     [SerializeField] private float fuel; //In seconds of fireball life
     [SerializeField] private float FuelDecayAmount; // the amount of fuel that get depleted
 
-    [SerializeField] private float launchForceFactor;
 
     [SerializeField] private float layerDetectionRadius;
     [SerializeField] private LayerMask ground;
@@ -41,12 +40,14 @@ public class PlayerController : MonoBehaviour, IResettable
 
     [SerializeField] private float jetRotationSpeed = 5f;
     [SerializeField] private Vector3 jetRestPosition;
+    [SerializeField] private AnimationCurve _jetScaleSize;
 
     //private Varibles
     private Rigidbody2D rbody;
     private ParticleController normalBodyFlamePSC, chemicalBodyFlamePSC;
     private ParticleController normalJetFlamePSC, chemicalJetFlamePSC;
     private AudioManger audioManger;
+    private Vector3 _spawnPosition;
 
     private bool _shootPressed;
     private bool _movePressed;
@@ -55,8 +56,6 @@ public class PlayerController : MonoBehaviour, IResettable
     private bool _isInChemicalCombustion;
 
     private float _remainingCombustionTime;
-
-    
 
     //UNITY RUNTIME-------------------------------------------------------------------------------------------------------------------------------------------
     void Start()
@@ -73,12 +72,15 @@ public class PlayerController : MonoBehaviour, IResettable
         normalJetFlamePSC = transform.GetChild(1).GetChild(0).GetComponent<ParticleController>();
         chemicalJetFlamePSC = transform.GetChild(1).GetChild(1).GetComponent<ParticleController>();
 
+        audioManger = GetComponent<AudioManger>();
+
         GameEvents.current.onApplyForceToPlayer += LaunchPlayer;
 
         _playerEvents.onPlayerDeath += DisableSelf;
         _playerEvents.onPlayerRespawn += ResetSelf;
+        _fireBallShooter.OnFireBallCharge += ReduceFuel;
 
-        audioManger = GetComponent<AudioManger>();
+        _spawnPosition = transform.position;
     }
     private void Update()
     {
@@ -142,7 +144,7 @@ public class PlayerController : MonoBehaviour, IResettable
         {
             _fireBallShooter.CreateFireball();
         }
-        else if (!_shootPressed && _fireBallShooter.Charging)
+        else if (!_shootPressed && _fireBallShooter.Charging && _fireBallShooter.HasFireBall)
         {
             _fireBallShooter.LaunchFireball(GetVectorFromMousePos());
         }
@@ -152,13 +154,23 @@ public class PlayerController : MonoBehaviour, IResettable
     {
         ResetSelf();
     }
-
     public void ResetSelf()
     {
         //Reset Player for Respawn
-        fuel = maxFuel * _currentCheckPoint.startFuel;
-        transform.position = _currentCheckPoint.transform.position;
+
+        if (_currentCheckPoint == null)
+        {
+            transform.position = _spawnPosition;
+            fuel = maxFuel;
+        }
+        else
+        {
+            transform.position = _currentCheckPoint.transform.position;
+            fuel = maxFuel * _currentCheckPoint.startFuel;
+        }
+
         SwitchToNormalBurn();
+        _fireBallShooter.Refresh();
 
         _isDead = false;
     }
@@ -225,7 +237,8 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private bool IsTouchingLayer(LayerMask layerMask)
     {
-        return Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
+        return Physics2D.Raycast(transform.position, Vector2.down, layerDetectionRadius, layerMask);
+        //Physics2D.OverlapCircle(transform.position, layerDetectionRadius, layerMask);
     }
     private Vector2 GetVectorFromMousePos()
     {
@@ -249,7 +262,7 @@ public class PlayerController : MonoBehaviour, IResettable
         _flameJet.transform.rotation = Quaternion.Slerp(_flameJet.transform.rotation, rotation, jetRotationSpeed * Time.deltaTime);
 
         // Scale the Jet to the appropriate size
-        float jetSize = fuel / maxFuel;
+        float jetSize = _jetScaleSize.Evaluate(fuel / maxFuel);
         foreach (Transform transform in _flameJet.GetComponentInChildren<Transform>())
         {
             transform.localScale = new Vector3(jetSize, jetSize, 1f);
@@ -258,41 +271,71 @@ public class PlayerController : MonoBehaviour, IResettable
     }
     private void ApplyFlameJet(float acceleration, float maxSpeed, float maxVelAirX, float maxVelAirY, float decayMultiplier)
     {
-        Vector2 dir = -GetVectorFromMousePos() * acceleration;
+        Vector2 dir = -GetVectorFromMousePos();
         Vector2 vel = rbody.velocity;
 
         // In Air
         if (!_isOnGround)
         {
-            // Prevent player from using jet to climb
-            if (vel.y > maxVelAirY)
-            {                
-                dir.y = Mathf.Min(dir.y, -Physics2D.gravity.y * 0.75f);
-            }
-
-            // Allow Player to use jet to slow fall rapidly
-            if (vel.y < maxVelAirY)
+            if (dir.y < 0)
             {
-                float velComponentY = Vector2.Dot(Vector2.down, vel.normalized);
-                dir.y += -Physics2D.gravity.y * velComponentY;
+                if (vel.y < maxVelAirX)
+                {
+                    dir.y *= acceleration;
+                }
             }
-            
-            rbody.AddForce(dir);            
-            rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxVelAirX);
+            // Prevent player from using jet to climb
+            else if (vel.y > maxVelAirY)
+            {
+                dir.y = Mathf.Min(dir.y * acceleration, -Physics2D.gravity.y * 0.75f);
+            }
+            // Allow Player to use jet to slow fall rapidly
+            else if (vel.y < maxVelAirY)
+            {
+                float velComponentY = dir.y;
+                float gravityOffset = -Physics2D.gravity.y * velComponentY * velComponentY;
+                float breakingPower = Mathf.Pow(Mathf.Abs(vel.y) - maxVelAirY, 1.2f);
 
+                dir.y = gravityOffset + breakingPower;
+            }
+
+            float velDotDir = Vector2.Dot(vel.normalized, dir);
+
+            // If accelerating in the direction of the velocity
+            if (velDotDir > 0)
+            {
+                // The faster player is moving the less acceleration force it applied from the jet
+                float percentMaxSpeed = (1 - Mathf.Min(Mathf.Abs(vel.x), maxVelAirX) / maxVelAirX);
+                dir.x = dir.x * acceleration * percentMaxSpeed;
+            }
+            else
+            {
+                dir.x *= acceleration;
+            }
+
+            rbody.AddForce(dir);
         }
         else // On ground
-        {           
+        {
+            // nullify drag caused by gravity pushing playerinto ground by creating a upwards force
+            float horizontalComponent = dir.x;
+            float gravityOffset = -Physics2D.gravity.y * horizontalComponent * horizontalComponent;
+
+            dir.x = dir.x * acceleration * (1 - (Mathf.Min(Mathf.Abs(vel.x), maxSpeed) / maxSpeed));
+            dir.y = gravityOffset;
+
+
             rbody.AddForce(dir);
-            rbody.velocity = Vector2.ClampMagnitude(rbody.velocity, maxSpeed);
         }
+
 
         ReduceFuel(FuelDecayAmount * decayMultiplier);
     }
-    private void LaunchPlayer(Vector3 entityPosition, float forceMultiplier)
+    private void LaunchPlayer(Vector3 entityPosition, float launchForce)
     {
         Vector3 direction = entityPosition - transform.position;
-        rbody.AddForce(-direction * (forceMultiplier * launchForceFactor) / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f));
+        // -v * launchForce / max((|dir|^2, 2)
+        rbody.AddForce(-direction * launchForce / Mathf.Max(Mathf.Pow(direction.magnitude, 2f), 0.1f), ForceMode2D.Impulse);
     }
 
     // COLLISIONS---------------------------------------------------------------------------------------------------------------------------------------------

@@ -10752,7 +10752,7 @@ MonoBehaviour:
   acceleration: 10
   maxSpeed: 8
   maxVelocityAirX: 12
-  maxVelocityAirY: -0.5
+  maxVelocityAirY: -0.2
   chemicalAcceleration: 20
   chemicalMaxSpeed: 12
   chemicalMaxVelocityAirX: 15
@@ -10760,7 +10760,6 @@ MonoBehaviour:
   maxFuel: 1000
   fuel: 1000
   FuelDecayAmount: 0.25
-  launchForceFactor: 200
   layerDetectionRadius: 0.5
   ground:
     serializedVersion: 2
@@ -10769,6 +10768,39 @@ MonoBehaviour:
   chemicalDecayMultiplier: 0
   jetRotationSpeed: 3
   jetRestPosition: {x: 0, y: 1, z: 0}
+  _jetScaleSize:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 3.8059301
+      outSlope: 3.8059301
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.09915013
+    - serializedVersion: 3
+      time: 0.3
+      value: 0.75
+      inSlope: 1
+      outSlope: 1
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 136
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &3267026587133420856
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -10819,6 +10851,8 @@ MonoBehaviour:
   _fireballLaunchSpeed: 10
   _fireballGrowthAmount: 0.05
   _fireballGrowthRate: 0.2
+  _fireballCreateCost: 10
+  _fireballChargeCost: 20
 --- !u!1 &6552350883335673588
 GameObject:
   m_ObjectHideFlags: 0
