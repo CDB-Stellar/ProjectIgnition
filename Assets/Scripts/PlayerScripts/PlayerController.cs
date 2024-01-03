@@ -283,7 +283,7 @@ public class PlayerController : MonoBehaviour, IResettable
                     dir.y *= acceleration;
                 }
             }
-            // Prevent player from using jet to climb
+            // Limit player climbing velocity
             else if (vel.y > maxVelAirY)
             {
                 dir.y = Mathf.Min(dir.y * acceleration, -Physics2D.gravity.y * 0.75f);
@@ -293,7 +293,7 @@ public class PlayerController : MonoBehaviour, IResettable
             {
                 float velComponentY = dir.y;
                 float gravityOffset = -Physics2D.gravity.y * velComponentY * velComponentY;
-                float breakingPower = Mathf.Pow(Mathf.Abs(vel.y) - maxVelAirY, 1.2f);
+                float breakingPower = Mathf.Pow(Mathf.Abs(Mathf.Abs(vel.y) - maxVelAirY), 1.2f);
 
                 dir.y = gravityOffset + breakingPower;
             }

@@ -29,6 +29,7 @@ public class LotusLeaf : MonoBehaviour, IResettable
     }
     public void ResetSelf()
     {
+        DisableSelf();
         anim.SetBool("burned", false);
         _collider2D.enabled = true;
     }
