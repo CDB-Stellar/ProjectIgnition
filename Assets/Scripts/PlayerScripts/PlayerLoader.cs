@@ -62,4 +62,11 @@ public class PlayerLoader : MonoBehaviour
     {
         SceneManager.LoadScene(0);
     }
+
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerRespawn -= HideUI;
+        _playerEvents.onPlayerDeath -= ShowUI;
+        _playerEvents.onPlayerLoadMenu -= LoadMainMenu;
+    }
 }

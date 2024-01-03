@@ -42,6 +42,12 @@ public class LotusLeaf : MonoBehaviour, IResettable
         rightFire.StartEmission();
 
     }
+
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerRespawn -= ResetSelf;
+    }
+
     private void OnCollisionEnter2D(Collision2D other)
     {
         if (other.gameObject.CompareTag("Player"))
