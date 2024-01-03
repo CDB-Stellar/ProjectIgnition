@@ -1,5 +1,4 @@
-﻿using Assets.Scripts;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerController : MonoBehaviour, IResettable
 {

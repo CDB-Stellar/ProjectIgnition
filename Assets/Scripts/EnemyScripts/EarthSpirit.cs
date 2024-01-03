@@ -1,8 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using Assets.Scripts;
-using UnityEditor.Build;
+﻿using UnityEngine;
 
 public class EarthSpirit : MonoBehaviour, IResettable
 {
