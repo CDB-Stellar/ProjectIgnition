@@ -17,6 +17,13 @@ public class ChemicalFuelScript : MonoBehaviour, IResettable
     {
         gameObject.SetActive(true);
     }
+
+    private void OnDisable()
+    {
+       _playerEvents.onPlayerRespawn -= ResetSelf;
+
+    }
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
         DisableSelf();

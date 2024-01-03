@@ -31,6 +31,11 @@ public class FuelScript : MonoBehaviour, IResettable
         gameObject.SetActive(true);
     }
 
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerRespawn -= ResetSelf;
+    }
+
     public void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Player")) //if the player touches the fuel's collider

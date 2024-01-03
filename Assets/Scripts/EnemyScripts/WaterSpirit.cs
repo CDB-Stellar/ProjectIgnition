@@ -41,6 +41,11 @@ public class WaterSpirit : MonoBehaviour, IResettable
         Instantiate(_deathEffect, _deathEffectPosition.position, Quaternion.identity);
         gameObject.SetActive(false);
     }
+
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerRespawn -= ResetSelf;
+    }
     private void OnTriggerEnter2D(Collider2D other)
 	{
         if (other.gameObject.CompareTag("turn"))

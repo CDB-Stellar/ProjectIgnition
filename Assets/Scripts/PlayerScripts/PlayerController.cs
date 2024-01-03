@@ -132,6 +132,12 @@ public class PlayerController : MonoBehaviour, IResettable
             TransformJet(GetVectorFromMousePos());
         }
     }
+    private void OnDisable()
+    {
+        _playerEvents.onPlayerDeath -= DisableSelf;
+        _playerEvents.onPlayerRespawn -= ResetSelf;
+        _fireBallShooter.OnFireBallCharge -= ReduceFuel;
+    }
     public bool IsIncapacitated()
     {
         return _isDead;
@@ -376,7 +382,7 @@ public class PlayerController : MonoBehaviour, IResettable
             else
                 CompairCheckPoints(newCheckPoint);
         }
-    }
+    }    
 
     // GIZMOSE------------------------------------------------------------------------------------------------------------------------------------------------
     private void OnDrawGizmos()
